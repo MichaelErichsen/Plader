@@ -1,6 +1,7 @@
 # Record collection
 
-This is an application maintaining a record collection
+This is an application maintaining a record collection.
+All text is in Danish
 
 ## First iteration is a Java SWT program
 
