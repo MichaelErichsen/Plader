@@ -26,7 +26,7 @@ import org.eclipse.swt.widgets.Text;
  */
 public class OpdaterDialog extends Dialog {
 
-	protected Object result;
+	protected Plade result;
 	protected Shell shlOpdater;
 	private Text textForlag;
 	private Text textNummer;
@@ -64,7 +64,7 @@ public class OpdaterDialog extends Dialog {
 	 *
 	 * @return the result
 	 */
-	public Object open(Connection connection, TableItem tableItem) {
+	public Plade open(Connection connection, TableItem tableItem) {
 		createContents(connection, tableItem);
 		shlOpdater.open();
 		shlOpdater.layout();
@@ -224,7 +224,11 @@ public class OpdaterDialog extends Dialog {
 			MessageBox messageBox = new MessageBox(shlOpdater, SWT.ICON_INFORMATION);
 
 			if (rc > 0) {
-				messageBox.setMessage("Pladen er opdateret. Genstart programmet for at se");
+				messageBox.setMessage("Pladen er opdateret");
+				result = new Plade(textForlag.getText(), textNummer.getText(), textKunstner.getText(),
+						textTitel.getText(), Integer.parseInt(textVolume.getText()), comboMedium.getText(),
+						Integer.parseInt(textAntal.getText()), Integer.parseInt(textAar.getText()),
+						textOprettet.getText());
 			} else {
 				messageBox.setMessage("Ingen plade er opdateret");
 			}

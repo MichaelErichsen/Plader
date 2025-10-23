@@ -24,6 +24,7 @@ import org.eclipse.swt.widgets.TableItem;
 
 /**
  * Vedligehold en pladesamling
+ * 
  * @author Michael Erichsen
  */
 public class Plader {
@@ -63,9 +64,9 @@ public class Plader {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				OpretDialog opretDialog = new OpretDialog(shlErichsensPladesamling, SWT.NONE);
-				opretDialog.open(connection);
+				Plade plade = opretDialog.open(connection);
+				plade.addItem(tablePlader);
 			}
-
 		});
 		btnOpret.setText("Opret");
 
@@ -85,8 +86,11 @@ public class Plader {
 				}
 
 				TableItem tableItem = selection[0];
+				int i = tablePlader.getSelectionIndices()[0];
 				OpdaterDialog opdaterDialog = new OpdaterDialog(shlErichsensPladesamling, SWT.NONE);
-				opdaterDialog.open(connection, tableItem);
+				Plade plade = opdaterDialog.open(connection, tableItem);
+				tablePlader.remove(i);
+				plade.addItem(tablePlader);
 			}
 		});
 		btnRet.setText("Ret");
@@ -104,8 +108,10 @@ public class Plader {
 				}
 
 				TableItem tableItem = selection[0];
+				int i = tablePlader.getSelectionIndices()[0];
 				SletDialog sletDialog = new SletDialog(shlErichsensPladesamling, SWT.NONE);
 				sletDialog.open(connection, tableItem);
+				tablePlader.remove(i);
 			}
 		});
 		btnSlet.setText("Slet");

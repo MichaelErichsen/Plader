@@ -219,7 +219,7 @@ public class SletDialog extends Dialog {
 			MessageBox messageBox = new MessageBox(shlSlet, SWT.ICON_INFORMATION);
 
 			if (rc > 0) {
-				messageBox.setMessage("Pladen er slettet. Genstart programmet for at se");
+				messageBox.setMessage("Pladen er slettet");
 			} else {
 				messageBox.setMessage("Ingen plade er slettet");
 			}

@@ -21,11 +21,11 @@ import org.eclipse.swt.widgets.Text;
 
 /**
  * Opret en plade i en pladesamling
- * 
+ *
  * @author Michael Erichsen
  */
 public class OpretDialog extends Dialog {
-	protected Object result;
+	protected Plade result;
 	protected Shell shlOpretEnNy;
 	private Text textForlag;
 	private Text textNummer;
@@ -64,7 +64,7 @@ public class OpretDialog extends Dialog {
 	 *
 	 * @return the result
 	 */
-	public Object open(Connection connection) {
+	public Plade open(Connection connection) {
 		this.connection = connection;
 		createContents();
 		shlOpretEnNy.open();
@@ -211,10 +211,15 @@ public class OpretDialog extends Dialog {
 			int rc = statement.executeUpdate();
 
 			MessageBox messageBox = new MessageBox(shlOpretEnNy, SWT.ICON_INFORMATION);
-			if (rc > 0)
-				messageBox.setMessage("Ny plade er oprettet. Genstart programmet for at se");
-			else
+			if (rc > 0) {
+				messageBox.setMessage("Ny plade er oprettet");
+				result = new Plade(textForlag.getText(), textNummer.getText(), textKunstner.getText(),
+						textTitel.getText(), Integer.parseInt(textVolume.getText()), comboMedium.getText(),
+						Integer.parseInt(textAntal.getText()), Integer.parseInt(textAar.getText()),
+						textOprettet.getText());
+			} else {
 				messageBox.setMessage("Ny plade er ikke oprettet");
+			}
 			messageBox.open();
 
 			shlOpretEnNy.close();
