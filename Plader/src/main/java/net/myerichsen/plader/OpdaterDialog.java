@@ -1,0 +1,243 @@
+package net.myerichsen.plader;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Dialog;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.MessageBox;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.widgets.Text;
+
+/**
+ * Opdatér en plade i pladesamlingen
+ *
+ * @author Michael Erichsen
+ */
+public class OpdaterDialog extends Dialog {
+
+	protected Object result;
+	protected Shell shlOpdater;
+	private Text textForlag;
+	private Text textNummer;
+	private Text textAar;
+	private Text textOprettet;
+	private Text textAntal;
+	private Combo comboMedium;
+	private Text textVolume;
+	private Text textTitel;
+	private Text textKunstner;
+	private Label lblKunstner;
+	private Label lblTitel;
+	private Label lblVolume;
+	private Label lblMedium;
+	private Label lblAntal;
+	private Label lblAar;
+	private Label lblOprettet;
+
+	/**
+	 * Create the dialog.
+	 *
+	 * @param parent
+	 * @param style
+	 */
+	public OpdaterDialog(Shell parent, int style) {
+		super(parent, style);
+		setText("SWT Dialog");
+	}
+
+	/**
+	 * Open the dialog.
+	 *
+	 * @param connection
+	 * @param tableItem
+	 *
+	 * @return the result
+	 */
+	public Object open(Connection connection, TableItem tableItem) {
+		createContents(connection, tableItem);
+		shlOpdater.open();
+		shlOpdater.layout();
+		Display display = getParent().getDisplay();
+		while (!shlOpdater.isDisposed()) {
+			if (!display.readAndDispatch()) {
+				display.sleep();
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * Create contents of the dialog.
+	 *
+	 * @param tableItem
+	 * @param connection
+	 */
+	private void createContents(Connection connection, TableItem tableItem) {
+		shlOpdater = new Shell(getParent(), getStyle());
+		shlOpdater.setSize(450, 323);
+		shlOpdater.setText("Opdatér en plade");
+		shlOpdater.setLayout(new GridLayout(2, false));
+
+		Label lblForlag = new Label(shlOpdater, SWT.NONE);
+		lblForlag.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblForlag.setText("Forlag");
+
+		textForlag = new Text(shlOpdater, SWT.BORDER);
+		textForlag.setEditable(false);
+		textForlag.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+
+		Label lblNummer = new Label(shlOpdater, SWT.NONE);
+		lblNummer.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblNummer.setText("Nummer");
+
+		textNummer = new Text(shlOpdater, SWT.BORDER);
+		textNummer.setEditable(false);
+		textNummer.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+
+		lblKunstner = new Label(shlOpdater, SWT.NONE);
+		lblKunstner.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblKunstner.setText("Kunstner");
+
+		textKunstner = new Text(shlOpdater, SWT.BORDER);
+		textKunstner.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+
+		lblTitel = new Label(shlOpdater, SWT.NONE);
+		lblTitel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblTitel.setText("Titel");
+
+		textTitel = new Text(shlOpdater, SWT.BORDER);
+		textTitel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+
+		lblVolume = new Label(shlOpdater, SWT.NONE);
+		lblVolume.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblVolume.setText("Volume");
+
+		textVolume = new Text(shlOpdater, SWT.BORDER);
+		textVolume.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+
+		lblMedium = new Label(shlOpdater, SWT.NONE);
+		lblMedium.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblMedium.setText("Medium");
+
+		comboMedium = new Combo(shlOpdater, SWT.BORDER | SWT.READ_ONLY);
+		comboMedium.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		comboMedium.add("CD");
+		comboMedium.add("LP");
+
+		lblAntal = new Label(shlOpdater, SWT.NONE);
+		lblAntal.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblAntal.setText("Antal");
+
+		textAntal = new Text(shlOpdater, SWT.BORDER);
+		textAntal.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+
+		lblAar = new Label(shlOpdater, SWT.NONE);
+		lblAar.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblAar.setText("År");
+
+		textAar = new Text(shlOpdater, SWT.BORDER);
+		textAar.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+
+		lblOprettet = new Label(shlOpdater, SWT.NONE);
+		lblOprettet.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblOprettet.setText("Oprettet");
+
+		textOprettet = new Text(shlOpdater, SWT.BORDER);
+		textOprettet.setEditable(false);
+		textOprettet.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+
+		populateDialog(connection, tableItem);
+
+		Button btnOpdater = new Button(shlOpdater, SWT.NONE);
+		btnOpdater.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				opdaterPlade(connection);
+			}
+
+		});
+		btnOpdater.setText("Opdatér");
+
+		Button btnFortryd = new Button(shlOpdater, SWT.NONE);
+		btnFortryd.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				shlOpdater.close();
+			}
+		});
+		btnFortryd.setText("Fortryd");
+
+	}
+
+	/**
+	 * Udfyld dialogen
+	 * 
+	 * @param connection
+	 * @param tableItem
+	 */
+	private void populateDialog(Connection connection, TableItem tableItem) {
+		textForlag.setText(tableItem.getText(0));
+		textNummer.setText(tableItem.getText(1));
+		textKunstner.setText(tableItem.getText(2));
+		textTitel.setText(tableItem.getText(3));
+		textVolume.setText(tableItem.getText(4));
+		comboMedium.setText(tableItem.getText(5));
+		textAntal.setText(tableItem.getText(6));
+		textAar.setText(tableItem.getText(7));
+		textOprettet.setText(tableItem.getText(8));
+	}
+
+	/**
+	 * Opdatér valgte plade
+	 *
+	 * @param connection
+	 */
+	private void opdaterPlade(Connection connection) {
+		try {
+
+			PreparedStatement statement = connection.prepareStatement(
+					"UPDATE PLADE SET KUNSTNER = ?, TITEL = ?, VOLUME = ?, MEDIUM = ?, ANTAL = ?, AAR = ? "
+							+ "WHERE FORLAG = ? AND NUMMER = ?");
+
+			statement.setString(1, textKunstner.getText());
+			statement.setString(2, textTitel.getText());
+			statement.setInt(3, Integer.parseInt(textVolume.getText()));
+			statement.setString(4, comboMedium.getText());
+			statement.setInt(5, Integer.parseInt(textAntal.getText()));
+			statement.setInt(6, Integer.parseInt(textAar.getText()));
+			statement.setString(7, textForlag.getText());
+			statement.setString(8, textNummer.getText());
+
+			int rc = statement.executeUpdate();
+
+			MessageBox messageBox = new MessageBox(shlOpdater, SWT.ICON_INFORMATION);
+
+			if (rc > 0) {
+				messageBox.setMessage("Pladen er opdateret. Genstart programmet for at se");
+			} else {
+				messageBox.setMessage("Ingen plade er opdateret");
+			}
+			messageBox.open();
+
+			shlOpdater.close();
+		} catch (
+
+		SQLException e) {
+			MessageBox messageBox = new MessageBox(shlOpdater, SWT.ICON_ERROR);
+			messageBox.setMessage(e.getMessage());
+			messageBox.open();
+			e.printStackTrace();
+		}
+	}
+}
