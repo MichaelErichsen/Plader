@@ -16,6 +16,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 
@@ -30,11 +31,11 @@ public class OpdaterDialog extends Dialog {
 	protected Shell shlOpdater;
 	private Text textForlag;
 	private Text textNummer;
-	private Text textAar;
+	private Spinner spinnerAar;
 	private Text textOprettet;
-	private Text textAntal;
+	private Spinner spinnerAntal;
 	private Combo comboMedium;
-	private Text textVolume;
+	private Spinner spinnerVolume;
 	private Text textTitel;
 	private Text textKunstner;
 	private Label lblKunstner;
@@ -123,8 +124,10 @@ public class OpdaterDialog extends Dialog {
 		lblVolume.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lblVolume.setText("Volume");
 
-		textVolume = new Text(shlOpdater, SWT.BORDER);
-		textVolume.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		spinnerVolume = new Spinner(shlOpdater, SWT.BORDER);
+		spinnerVolume.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		spinnerVolume.setMinimum(1);
+		spinnerVolume.setSelection(1);
 
 		lblMedium = new Label(shlOpdater, SWT.NONE);
 		lblMedium.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
@@ -139,15 +142,20 @@ public class OpdaterDialog extends Dialog {
 		lblAntal.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lblAntal.setText("Antal");
 
-		textAntal = new Text(shlOpdater, SWT.BORDER);
-		textAntal.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		spinnerAntal = new Spinner(shlOpdater, SWT.BORDER);
+		spinnerAntal.setMinimum(1);
+		spinnerAntal.setSelection(1);
+		spinnerAntal.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
 		lblAar = new Label(shlOpdater, SWT.NONE);
 		lblAar.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lblAar.setText("År");
 
-		textAar = new Text(shlOpdater, SWT.BORDER);
-		textAar.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		spinnerAar = new Spinner(shlOpdater, SWT.BORDER);
+		spinnerAar.setMaximum(2030);
+		spinnerAar.setMinimum(1948);
+		spinnerAar.setSelection(1968);
+		spinnerAar.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
 		lblOprettet = new Label(shlOpdater, SWT.NONE);
 		lblOprettet.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
@@ -182,7 +190,7 @@ public class OpdaterDialog extends Dialog {
 
 	/**
 	 * Udfyld dialogen
-	 * 
+	 *
 	 * @param connection
 	 * @param tableItem
 	 */
@@ -191,10 +199,12 @@ public class OpdaterDialog extends Dialog {
 		textNummer.setText(tableItem.getText(1));
 		textKunstner.setText(tableItem.getText(2));
 		textTitel.setText(tableItem.getText(3));
-		textVolume.setText(tableItem.getText(4));
+		spinnerVolume.setMinimum(1);
+		spinnerVolume.setSelection(1);
 		comboMedium.setText(tableItem.getText(5));
-		textAntal.setText(tableItem.getText(6));
-		textAar.setText(tableItem.getText(7));
+		spinnerAntal.setMinimum(1);
+		spinnerAntal.setSelection(1);
+		spinnerAar.setSelection(Integer.valueOf(tableItem.getText(7)));
 		textOprettet.setText(tableItem.getText(8));
 	}
 
@@ -212,10 +222,10 @@ public class OpdaterDialog extends Dialog {
 
 			statement.setString(1, textKunstner.getText());
 			statement.setString(2, textTitel.getText());
-			statement.setInt(3, Integer.parseInt(textVolume.getText()));
+			statement.setInt(3, Integer.parseInt(spinnerVolume.getText()));
 			statement.setString(4, comboMedium.getText());
-			statement.setInt(5, Integer.parseInt(textAntal.getText()));
-			statement.setInt(6, Integer.parseInt(textAar.getText()));
+			statement.setInt(5, Integer.parseInt(spinnerAntal.getText()));
+			statement.setInt(6, Integer.parseInt(spinnerAar.getText()));
 			statement.setString(7, textForlag.getText());
 			statement.setString(8, textNummer.getText());
 
@@ -226,8 +236,8 @@ public class OpdaterDialog extends Dialog {
 			if (rc > 0) {
 				messageBox.setMessage("Pladen er opdateret");
 				result = new Plade(textForlag.getText(), textNummer.getText(), textKunstner.getText(),
-						textTitel.getText(), Integer.parseInt(textVolume.getText()), comboMedium.getText(),
-						Integer.parseInt(textAntal.getText()), Integer.parseInt(textAar.getText()),
+						textTitel.getText(), Integer.parseInt(spinnerVolume.getText()), comboMedium.getText(),
+						Integer.parseInt(spinnerAntal.getText()), Integer.parseInt(spinnerAar.getText()),
 						textOprettet.getText());
 			} else {
 				messageBox.setMessage("Ingen plade er opdateret");

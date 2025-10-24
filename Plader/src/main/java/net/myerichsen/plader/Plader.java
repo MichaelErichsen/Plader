@@ -25,7 +25,7 @@ import org.eclipse.swt.widgets.TableItem;
 
 /**
  * Vedligehold en pladesamling
- * 
+ *
  * @author Michael Erichsen
  */
 public class Plader {
@@ -58,8 +58,12 @@ public class Plader {
 				List<Plade> pladeListe = filterDialog.open(connection, tablePlader);
 				tablePlader.removeAll();
 
-				for (Plade plade : pladeListe) {
-					plade.addItem(tablePlader);
+				if (pladeListe != null) {
+					for (Plade plade : pladeListe) {
+						plade.addItem(tablePlader);
+					}
+				} else {
+					populateFully(shlErichsensPladesamling);
 				}
 
 			}
@@ -72,8 +76,10 @@ public class Plader {
 			public void widgetSelected(SelectionEvent e) {
 				OpretDialog opretDialog = new OpretDialog(shlErichsensPladesamling, SWT.NONE);
 				Plade plade = opretDialog.open(connection);
-				TableItem item2 = plade.addItem(tablePlader);
-				tablePlader.showItem(item2);
+				if (plade != null) {
+					TableItem item2 = plade.addItem(tablePlader);
+					tablePlader.showItem(item2);
+				}
 			}
 		});
 		btnOpret.setText("Opret");
@@ -121,8 +127,10 @@ public class Plader {
 				TableItem tableItem = selection[0];
 				int i = tablePlader.getSelectionIndices()[0];
 				SletDialog sletDialog = new SletDialog(shlErichsensPladesamling, SWT.NONE);
-				sletDialog.open(connection, tableItem);
-				tablePlader.remove(i);
+				boolean slettet = sletDialog.open(connection, tableItem);
+				if (slettet) {
+					tablePlader.remove(i);
+				}
 			}
 		});
 		btnSlet.setText("Slet");

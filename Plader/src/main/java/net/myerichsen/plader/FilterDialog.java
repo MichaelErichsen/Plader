@@ -13,11 +13,13 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
 
@@ -28,14 +30,14 @@ import org.eclipse.swt.widgets.Text;
  */
 public class FilterDialog extends Dialog {
 	protected List<Plade> result;
-	protected Shell shell;
+	protected Shell shlFiltrerPlader;
 	private Text textForlag;
 	private Text textNummer;
-	private Text textAar;
+	private Spinner spinnerAar;
 	private Text textOprettet;
-	private Text textAntal;
-	private Text textMedium;
-	private Text textVolume;
+	private Spinner spinnerAntal;
+	private Combo comboMedium;
+	private Spinner spinnerVolume;
 	private Text textTitel;
 	private Text textKunstner;
 	private Connection connection;
@@ -68,10 +70,10 @@ public class FilterDialog extends Dialog {
 		this.connection = connection;
 		this.tablePlader = tablePlader;
 		createContents();
-		shell.open();
-		shell.layout();
+		shlFiltrerPlader.open();
+		shlFiltrerPlader.layout();
 		Display display = getParent().getDisplay();
-		while (!shell.isDisposed()) {
+		while (!shlFiltrerPlader.isDisposed()) {
 			if (!display.readAndDispatch()) {
 				display.sleep();
 			}
@@ -83,81 +85,87 @@ public class FilterDialog extends Dialog {
 	 * Create contents of the dialog.
 	 */
 	private void createContents() {
-		shell = new Shell(getParent(), getStyle());
-		shell.setSize(450, 323);
-		shell.setText("Opret en ny plade");
-		shell.setLayout(new GridLayout(2, false));
+		shlFiltrerPlader = new Shell(getParent(), getStyle());
+		shlFiltrerPlader.setSize(450, 323);
+		shlFiltrerPlader.setText("Opret en ny plade");
+		shlFiltrerPlader.setLayout(new GridLayout(2, false));
 
-		Label lblForlag = new Label(shell, SWT.NONE);
+		Label lblForlag = new Label(shlFiltrerPlader, SWT.NONE);
 		lblForlag.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lblForlag.setText("Forlag");
 
-		textForlag = new Text(shell, SWT.BORDER);
+		textForlag = new Text(shlFiltrerPlader, SWT.BORDER);
 		textForlag.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
-		Label lblNummer = new Label(shell, SWT.NONE);
+		Label lblNummer = new Label(shlFiltrerPlader, SWT.NONE);
 		lblNummer.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lblNummer.setText("Nummer");
 
-		textNummer = new Text(shell, SWT.BORDER);
+		textNummer = new Text(shlFiltrerPlader, SWT.BORDER);
 		textNummer.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
-		lblKunstner = new Label(shell, SWT.NONE);
+		lblKunstner = new Label(shlFiltrerPlader, SWT.NONE);
 		lblKunstner.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lblKunstner.setText("Kunstner");
 
-		textKunstner = new Text(shell, SWT.BORDER);
+		textKunstner = new Text(shlFiltrerPlader, SWT.BORDER);
 		textKunstner.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
-		lblTitel = new Label(shell, SWT.NONE);
+		lblTitel = new Label(shlFiltrerPlader, SWT.NONE);
 		lblTitel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lblTitel.setText("Titel");
 
-		textTitel = new Text(shell, SWT.BORDER);
+		textTitel = new Text(shlFiltrerPlader, SWT.BORDER);
 		textTitel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
-		lblVolume = new Label(shell, SWT.NONE);
+		lblVolume = new Label(shlFiltrerPlader, SWT.NONE);
 		lblVolume.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lblVolume.setText("Volume");
 
-		textVolume = new Text(shell, SWT.BORDER);
-		textVolume.setEditable(false);
-		textVolume.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		textVolume.addListener(SWT.KeyDown, event -> event.doit = Character.isDigit(event.character));
+		spinnerVolume = new Spinner(shlFiltrerPlader, SWT.BORDER);
+		spinnerVolume.setMinimum(1);
+		spinnerVolume.setSelection(1);
+		spinnerVolume.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		spinnerVolume.addListener(SWT.KeyDown, event -> event.doit = Character.isDigit(event.character));
 
-		lblMedium = new Label(shell, SWT.NONE);
+		lblMedium = new Label(shlFiltrerPlader, SWT.NONE);
 		lblMedium.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lblMedium.setText("Medium");
 
-		textMedium = new Text(shell, SWT.BORDER | SWT.READ_ONLY);
-		textMedium.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		comboMedium = new Combo(shlFiltrerPlader, SWT.BORDER | SWT.READ_ONLY);
+		comboMedium.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		comboMedium.add("CD");
+		comboMedium.add("LP");
 
-		lblAntal = new Label(shell, SWT.NONE);
+		lblAntal = new Label(shlFiltrerPlader, SWT.NONE);
 		lblAntal.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lblAntal.setText("Antal");
 
-		textAntal = new Text(shell, SWT.BORDER);
-		textAntal.setEditable(false);
-		textAntal.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		textAntal.addListener(SWT.KeyDown, event -> event.doit = Character.isDigit(event.character));
+		spinnerAntal = new Spinner(shlFiltrerPlader, SWT.BORDER);
+		spinnerAntal.setMinimum(1);
+		spinnerAntal.setSelection(1);
+		spinnerAntal.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		spinnerAntal.addListener(SWT.KeyDown, event -> event.doit = Character.isDigit(event.character));
 
-		lblAar = new Label(shell, SWT.NONE);
+		lblAar = new Label(shlFiltrerPlader, SWT.NONE);
 		lblAar.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lblAar.setText("År");
 
-		textAar = new Text(shell, SWT.BORDER);
-		textAar.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		textAar.addListener(SWT.KeyDown, event -> event.doit = Character.isDigit(event.character));
+		spinnerAar = new Spinner(shlFiltrerPlader, SWT.BORDER);
+		spinnerAar.setMaximum(2030);
+		spinnerAar.setMinimum(1948);
+		spinnerAar.setSelection(1968);
+		spinnerAar.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
-		lblOprettet = new Label(shell, SWT.NONE);
+		lblOprettet = new Label(shlFiltrerPlader, SWT.NONE);
 		lblOprettet.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lblOprettet.setText("Oprettet");
 
-		textOprettet = new Text(shell, SWT.BORDER);
+		textOprettet = new Text(shlFiltrerPlader, SWT.BORDER);
 		textOprettet.setEditable(false);
 		textOprettet.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
-		Button btnFiltrer = new Button(shell, SWT.NONE);
+		Button btnFiltrer = new Button(shlFiltrerPlader, SWT.NONE);
 		btnFiltrer.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -167,11 +175,11 @@ public class FilterDialog extends Dialog {
 		});
 		btnFiltrer.setText("Filtrér");
 
-		Button btnFortryd = new Button(shell, SWT.NONE);
+		Button btnFortryd = new Button(shlFiltrerPlader, SWT.NONE);
 		btnFortryd.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				shell.close();
+				shlFiltrerPlader.close();
 			}
 		});
 		btnFortryd.setText("Fortryd");
@@ -187,17 +195,16 @@ public class FilterDialog extends Dialog {
 	 */
 	private List<Plade> filtrerPlade(Connection connection, Table tablePlader) {
 		List<Plade> list = new ArrayList<>();
-		String[] values = new String[5];
-		String[] fieldNames = new String[5];
+		String[] values = new String[6];
+		String[] fieldNames = new String[6];
 		int aar = 0;
 		int i = 0;
 		PreparedStatement statement;
 		ResultSet rs;
 
 		if (textForlag.getText().isEmpty() && textNummer.getText().isEmpty() && textKunstner.getText().isEmpty()
-				&& textTitel.getText().isEmpty() && textVolume.getText().isEmpty() && textMedium.getText().isEmpty()
-				&& textAntal.getText().isEmpty() && textAar.getText().isEmpty()) {
-			MessageBox messageBox = new MessageBox(shell, SWT.ICON_WARNING);
+				&& textTitel.getText().isEmpty() && comboMedium.getText().isEmpty() && spinnerAar.getText().isEmpty()) {
+			MessageBox messageBox = new MessageBox(shlFiltrerPlader, SWT.ICON_WARNING);
 			messageBox.setMessage("Mindst ét felt skal udfyldes!");
 			messageBox.open();
 			return list;
@@ -225,9 +232,14 @@ public class FilterDialog extends Dialog {
 			values[i] = textTitel.getText();
 			i++;
 		}
-		if (!textAar.getText().isBlank()) {
+		if (!comboMedium.getText().isBlank()) {
+			fieldNames[i] = "MEDIUM";
+			values[i] = comboMedium.getText();
+			i++;
+		}
+		if (!spinnerAar.getText().isBlank()) {
 			fieldNames[i] = "AAR";
-			values[i] = textAar.getText();
+			values[i] = spinnerAar.getText();
 			i++;
 		}
 
@@ -266,12 +278,12 @@ public class FilterDialog extends Dialog {
 				list.add(plade);
 			}
 
-			shell.close();
+			shlFiltrerPlader.close();
 			return list;
 		} catch (
 
 		SQLException e) {
-			MessageBox messageBox = new MessageBox(shell, SWT.ICON_ERROR);
+			MessageBox messageBox = new MessageBox(shlFiltrerPlader, SWT.ICON_ERROR);
 			messageBox.setMessage(e.getMessage());
 			messageBox.open();
 			e.printStackTrace();

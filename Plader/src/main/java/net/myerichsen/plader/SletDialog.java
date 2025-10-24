@@ -25,7 +25,7 @@ import org.eclipse.swt.widgets.Text;
  */
 public class SletDialog extends Dialog {
 
-	protected Object result;
+	protected boolean result;
 	protected Shell shlSlet;
 	private Text textForlag;
 	private Text textNummer;
@@ -63,7 +63,7 @@ public class SletDialog extends Dialog {
 	 *
 	 * @return the result
 	 */
-	public Object open(Connection connection, TableItem tableItem) {
+	public boolean open(Connection connection, TableItem tableItem) {
 		createContents(connection, tableItem);
 		shlSlet.open();
 		shlSlet.layout();
@@ -165,7 +165,7 @@ public class SletDialog extends Dialog {
 		btnSlet.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				sletPlade(connection);
+				result = sletPlade(connection);
 			}
 
 		});
@@ -184,7 +184,7 @@ public class SletDialog extends Dialog {
 
 	/**
 	 * Udfyld dialogen
-	 * 
+	 *
 	 * @param connection
 	 * @param tableItem
 	 */
@@ -204,8 +204,9 @@ public class SletDialog extends Dialog {
 	 * Slet valgte plade
 	 *
 	 * @param connection
+	 * @return
 	 */
-	private void sletPlade(Connection connection) {
+	private boolean sletPlade(Connection connection) {
 		try {
 
 			PreparedStatement statement = connection
@@ -226,13 +227,13 @@ public class SletDialog extends Dialog {
 			messageBox.open();
 
 			shlSlet.close();
-		} catch (
-
-		SQLException e) {
+			return true;
+		} catch (SQLException e) {
 			MessageBox messageBox = new MessageBox(shlSlet, SWT.ICON_ERROR);
 			messageBox.setMessage(e.getMessage());
 			messageBox.open();
 			e.printStackTrace();
+			return false;
 		}
 	}
 }

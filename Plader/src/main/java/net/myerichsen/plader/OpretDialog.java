@@ -17,6 +17,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
 
 /**
@@ -29,11 +30,11 @@ public class OpretDialog extends Dialog {
 	protected Shell shlOpretEnNy;
 	private Text textForlag;
 	private Text textNummer;
-	private Text textAar;
+	private Spinner spinnerAar;
 	private Text textOprettet;
-	private Text textAntal;
+	private Spinner spinnerAntal;
 	private Combo comboMedium;
-	private Text textVolume;
+	private Spinner spinnerVolume;
 	private Text textTitel;
 	private Text textKunstner;
 	private Connection connection;
@@ -119,9 +120,11 @@ public class OpretDialog extends Dialog {
 		lblVolume.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lblVolume.setText("Volume");
 
-		textVolume = new Text(shlOpretEnNy, SWT.BORDER);
-		textVolume.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		textVolume.addListener(SWT.KeyDown, event -> event.doit = Character.isDigit(event.character));
+		spinnerVolume = new Spinner(shlOpretEnNy, SWT.BORDER);
+		spinnerVolume.setSelection(1);
+		spinnerVolume.setMinimum(1);
+		spinnerVolume.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		spinnerVolume.addListener(SWT.KeyDown, event -> event.doit = Character.isDigit(event.character));
 
 		lblMedium = new Label(shlOpretEnNy, SWT.NONE);
 		lblMedium.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
@@ -136,17 +139,21 @@ public class OpretDialog extends Dialog {
 		lblAntal.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lblAntal.setText("Antal");
 
-		textAntal = new Text(shlOpretEnNy, SWT.BORDER);
-		textAntal.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		textAntal.addListener(SWT.KeyDown, event -> event.doit = Character.isDigit(event.character));
+		spinnerAntal = new Spinner(shlOpretEnNy, SWT.BORDER);
+		spinnerAntal.setSelection(1);
+		spinnerAntal.setMinimum(1);
+		spinnerAntal.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		spinnerAntal.addListener(SWT.KeyDown, event -> event.doit = Character.isDigit(event.character));
 
 		lblAar = new Label(shlOpretEnNy, SWT.NONE);
 		lblAar.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lblAar.setText("År");
 
-		textAar = new Text(shlOpretEnNy, SWT.BORDER);
-		textAar.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		textAar.addListener(SWT.KeyDown, event -> event.doit = Character.isDigit(event.character));
+		spinnerAar = new Spinner(shlOpretEnNy, SWT.BORDER);
+		spinnerAar.setMaximum(2030);
+		spinnerAar.setMinimum(1948);
+		spinnerAar.setSelection(1968);
+		spinnerAar.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
 		lblOprettet = new Label(shlOpretEnNy, SWT.NONE);
 		lblOprettet.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
@@ -184,9 +191,9 @@ public class OpretDialog extends Dialog {
 	private void opretPlade() {
 		try {
 			if (textForlag.getText().isEmpty() || textNummer.getText().isEmpty() || textKunstner.getText().isEmpty()
-					|| textTitel.getText().isEmpty() || textVolume.getText().isEmpty()
-					|| comboMedium.getText().isEmpty() || textAntal.getText().isEmpty()
-					|| textAar.getText().isEmpty()) {
+					|| textTitel.getText().isEmpty() || spinnerVolume.getText().isEmpty()
+					|| comboMedium.getText().isEmpty() || spinnerAntal.getText().isEmpty()
+					|| spinnerAar.getText().isEmpty()) {
 				MessageBox messageBox = new MessageBox(shlOpretEnNy, SWT.ICON_WARNING);
 				messageBox.setMessage("Alle felter skal udfyldes!");
 				messageBox.open();
@@ -202,10 +209,10 @@ public class OpretDialog extends Dialog {
 			statement.setString(2, textNummer.getText());
 			statement.setString(3, textKunstner.getText());
 			statement.setString(4, textTitel.getText());
-			statement.setInt(5, Integer.parseInt(textVolume.getText()));
+			statement.setInt(5, Integer.parseInt(spinnerVolume.getText()));
 			statement.setString(6, comboMedium.getText());
-			statement.setInt(7, Integer.parseInt(textAntal.getText()));
-			statement.setInt(8, Integer.parseInt(textAar.getText()));
+			statement.setInt(7, Integer.parseInt(spinnerAntal.getText()));
+			statement.setInt(8, Integer.parseInt(spinnerAar.getText()));
 			statement.setString(9, textOprettet.getText());
 
 			int rc = statement.executeUpdate();
@@ -214,8 +221,8 @@ public class OpretDialog extends Dialog {
 			if (rc > 0) {
 				messageBox.setMessage("Ny plade er oprettet");
 				result = new Plade(textForlag.getText(), textNummer.getText(), textKunstner.getText(),
-						textTitel.getText(), Integer.parseInt(textVolume.getText()), comboMedium.getText(),
-						Integer.parseInt(textAntal.getText()), Integer.parseInt(textAar.getText()),
+						textTitel.getText(), Integer.parseInt(spinnerVolume.getText()), comboMedium.getText(),
+						Integer.parseInt(spinnerAntal.getText()), Integer.parseInt(spinnerAar.getText()),
 						textOprettet.getText());
 			} else {
 				messageBox.setMessage("Ny plade er ikke oprettet");
