@@ -5,6 +5,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -54,7 +55,13 @@ public class Plader {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				FilterDialog filterDialog = new FilterDialog(shlErichsensPladesamling, SWT.NONE);
-				filterDialog.open();
+				List<Plade> pladeListe = filterDialog.open(connection, tablePlader);
+				tablePlader.removeAll();
+
+				for (Plade plade : pladeListe) {
+					plade.addItem(tablePlader);
+				}
+
 			}
 		});
 		btnFiltrer.setText("Filtrér");
@@ -65,7 +72,8 @@ public class Plader {
 			public void widgetSelected(SelectionEvent e) {
 				OpretDialog opretDialog = new OpretDialog(shlErichsensPladesamling, SWT.NONE);
 				Plade plade = opretDialog.open(connection);
-				plade.addItem(tablePlader);
+				TableItem item2 = plade.addItem(tablePlader);
+				tablePlader.showItem(item2);
 			}
 		});
 		btnOpret.setText("Opret");
@@ -89,8 +97,11 @@ public class Plader {
 				int i = tablePlader.getSelectionIndices()[0];
 				OpdaterDialog opdaterDialog = new OpdaterDialog(shlErichsensPladesamling, SWT.NONE);
 				Plade plade = opdaterDialog.open(connection, tableItem);
-				tablePlader.remove(i);
-				plade.addItem(tablePlader);
+
+				if (plade != null) {
+					tablePlader.remove(i);
+					plade.addItem(tablePlader);
+				}
 			}
 		});
 		btnRet.setText("Ret");
@@ -116,7 +127,7 @@ public class Plader {
 		});
 		btnSlet.setText("Slet");
 
-		tablePlader = new Table(shlErichsensPladesamling, SWT.BORDER | SWT.FULL_SELECTION);
+		tablePlader = new Table(shlErichsensPladesamling, SWT.BORDER | SWT.FULL_SELECTION | SWT.SINGLE);
 		GridData gd_tablePlader = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
 		gd_tablePlader.widthHint = 855;
 		tablePlader.setLayoutData(gd_tablePlader);
@@ -160,6 +171,17 @@ public class Plader {
 		tblclmnOprettet.setText("Oprettet");
 		new Label(shlErichsensPladesamling, SWT.NONE);
 
+		populateFully(shlErichsensPladesamling);
+
+		shlErichsensPladesamling.open();
+		while (!shlErichsensPladesamling.isDisposed()) {
+			if (!display.readAndDispatch()) {
+				display.sleep();
+			}
+		}
+	}
+
+	private static void populateFully(Shell shlErichsensPladesamling) {
 		try {
 			connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/postgres", "postgres", "admin");
 			udenFilter = connection.prepareStatement("SELECT * FROM PLADE ORDER BY KUNSTNER");
@@ -182,17 +204,11 @@ public class Plader {
 				item.setText(8, rs.getString("OPRETTET"));
 			}
 
-		} catch (
-
-		SQLException e) {
+		} catch (SQLException e) {
+			MessageBox messageBox = new MessageBox(shlErichsensPladesamling, SWT.ICON_ERROR);
+			messageBox.setMessage(e.getMessage());
+			messageBox.open();
 			e.printStackTrace();
-		}
-
-		shlErichsensPladesamling.open();
-		while (!shlErichsensPladesamling.isDisposed()) {
-			if (!display.readAndDispatch()) {
-				display.sleep();
-			}
 		}
 	}
 
