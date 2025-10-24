@@ -22,6 +22,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.graphics.Point;
 
 /**
  * Vedligehold en pladesamling
@@ -43,6 +44,7 @@ public class Plader {
 	public static void main(String[] args) {
 		Display display = Display.getDefault();
 		Shell shlErichsensPladesamling = new Shell();
+		shlErichsensPladesamling.setMinimumSize(new Point(1200, 380));
 		shlErichsensPladesamling.setSize(957, 684);
 		shlErichsensPladesamling.setText("Erichsens pladesamling");
 		shlErichsensPladesamling.setLayout(new GridLayout(1, false));
@@ -143,39 +145,39 @@ public class Plader {
 		tablePlader.setLinesVisible(true);
 
 		TableColumn tblclmnForlag = new TableColumn(tablePlader, SWT.NONE);
-		tblclmnForlag.setWidth(100);
+		tblclmnForlag.setWidth(150);
 		tblclmnForlag.setText("Forlag");
 
 		TableColumn tblclmnNummer = new TableColumn(tablePlader, SWT.NONE);
-		tblclmnNummer.setWidth(100);
+		tblclmnNummer.setWidth(150);
 		tblclmnNummer.setText("Nummer");
 
 		TableColumn tblclmnKunstner = new TableColumn(tablePlader, SWT.NONE);
-		tblclmnKunstner.setWidth(100);
+		tblclmnKunstner.setWidth(250);
 		tblclmnKunstner.setText("Kunstner");
 
 		TableColumn tblclmnTitel = new TableColumn(tablePlader, SWT.NONE);
-		tblclmnTitel.setWidth(100);
+		tblclmnTitel.setWidth(250);
 		tblclmnTitel.setText("Titel");
 
 		TableColumn tblclmnVolume = new TableColumn(tablePlader, SWT.NONE);
-		tblclmnVolume.setWidth(100);
+		tblclmnVolume.setWidth(50);
 		tblclmnVolume.setText("Volume");
 
 		TableColumn tblclmnMedium = new TableColumn(tablePlader, SWT.NONE);
-		tblclmnMedium.setWidth(100);
+		tblclmnMedium.setWidth(58);
 		tblclmnMedium.setText("Medium");
 
 		TableColumn tblclmnAntal = new TableColumn(tablePlader, SWT.NONE);
-		tblclmnAntal.setWidth(100);
+		tblclmnAntal.setWidth(42);
 		tblclmnAntal.setText("Antal");
 
 		TableColumn tblclmnAar = new TableColumn(tablePlader, SWT.NONE);
-		tblclmnAar.setWidth(100);
+		tblclmnAar.setWidth(52);
 		tblclmnAar.setText("År");
 
 		TableColumn tblclmnOprettet = new TableColumn(tablePlader, SWT.NONE);
-		tblclmnOprettet.setWidth(100);
+		tblclmnOprettet.setWidth(145);
 		tblclmnOprettet.setText("Oprettet");
 		new Label(shlErichsensPladesamling, SWT.NONE);
 
