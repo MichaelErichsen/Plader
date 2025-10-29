@@ -4,6 +4,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
+import org.eclipse.jface.resource.FontDescriptor;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.resource.LocalResourceManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -17,6 +20,8 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.layout.RowLayout;
 
 /**
  * Slet en plade fra pladesamlingen
@@ -43,6 +48,8 @@ public class SletDialog extends Dialog {
 	private Label lblAntal;
 	private Label lblAar;
 	private Label lblOprettet;
+	private LocalResourceManager localResourceManager;
+	private Composite composite;
 
 	/**
 	 * Create the dialog.
@@ -52,7 +59,12 @@ public class SletDialog extends Dialog {
 	 */
 	public SletDialog(Shell parent, int style) {
 		super(parent, style);
+		createResourceManager();
 		setText("SWT Dialog");
+	}
+
+	private void createResourceManager() {
+		localResourceManager = new LocalResourceManager(JFaceResources.getResources());
 	}
 
 	/**
@@ -84,101 +96,120 @@ public class SletDialog extends Dialog {
 	 */
 	private void createContents(Connection connection, TableItem tableItem) {
 		shlSlet = new Shell(getParent(), getStyle());
-		shlSlet.setSize(450, 323);
+		shlSlet.setSize(450, 410);
 		shlSlet.setText("Slet en plade");
 		shlSlet.setLayout(new GridLayout(2, false));
 
 		Label lblForlag = new Label(shlSlet, SWT.NONE);
-		lblForlag.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblForlag.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
 		lblForlag.setText("Forlag");
 
 		textForlag = new Text(shlSlet, SWT.BORDER);
+		textForlag.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
 		textForlag.setEditable(false);
 		textForlag.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
 		Label lblNummer = new Label(shlSlet, SWT.NONE);
-		lblNummer.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblNummer.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
 		lblNummer.setText("Nummer");
 
 		textNummer = new Text(shlSlet, SWT.BORDER);
+		textNummer.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
 		textNummer.setEditable(false);
 		textNummer.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
 		lblKunstner = new Label(shlSlet, SWT.NONE);
-		lblKunstner.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblKunstner.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
 		lblKunstner.setText("Kunstner");
 
 		textKunstner = new Text(shlSlet, SWT.BORDER);
+		textKunstner.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
 		textKunstner.setEditable(false);
 		textKunstner.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
 		lblTitel = new Label(shlSlet, SWT.NONE);
-		lblTitel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblTitel.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
 		lblTitel.setText("Titel");
 
 		textTitel = new Text(shlSlet, SWT.BORDER);
+		textTitel.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
 		textTitel.setEditable(false);
 		textTitel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
 		lblVolume = new Label(shlSlet, SWT.NONE);
-		lblVolume.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblVolume.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
 		lblVolume.setText("Volume");
 
 		textVolume = new Text(shlSlet, SWT.BORDER);
+		textVolume.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
 		textVolume.setEditable(false);
 		textVolume.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
 		lblMedium = new Label(shlSlet, SWT.NONE);
-		lblMedium.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblMedium.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
 		lblMedium.setText("Medium");
 
 		textMedium = new Text(shlSlet, SWT.BORDER | SWT.READ_ONLY);
+		textMedium.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
 		textMedium.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
 		lblAntal = new Label(shlSlet, SWT.NONE);
-		lblAntal.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblAntal.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
 		lblAntal.setText("Antal");
 
 		textAntal = new Text(shlSlet, SWT.BORDER);
+		textAntal.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
 		textAntal.setEditable(false);
 		textAntal.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
 		lblAar = new Label(shlSlet, SWT.NONE);
-		lblAar.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblAar.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
 		lblAar.setText("År");
 
 		textAar = new Text(shlSlet, SWT.BORDER);
+		textAar.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
 		textAar.setEditable(false);
 		textAar.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
 		lblOprettet = new Label(shlSlet, SWT.NONE);
-		lblOprettet.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblOprettet.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
 		lblOprettet.setText("Oprettet");
 
 		textOprettet = new Text(shlSlet, SWT.BORDER);
+		textOprettet.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
 		textOprettet.setEditable(false);
 		textOprettet.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
 		populateDialog(connection, tableItem);
+		new Label(shlSlet, SWT.NONE);
+				new Label(shlSlet, SWT.NONE);
+		
+		composite = new Composite(shlSlet, SWT.NONE);
+		RowLayout rl_composite = new RowLayout(SWT.HORIZONTAL);
+		rl_composite.pack = false;
+		composite.setLayout(rl_composite);
+		composite.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, true, false, 2, 1));
+		
+				Button btnSlet = new Button(composite, SWT.NONE);
+				btnSlet.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
+				btnSlet.addSelectionListener(new SelectionAdapter() {
+					@Override
+					public void widgetSelected(SelectionEvent e) {
+						result = sletPlade(connection);
+					}
 
-		Button btnSlet = new Button(shlSlet, SWT.NONE);
-		btnSlet.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				result = sletPlade(connection);
-			}
-
-		});
-		btnSlet.setText("Slet");
-
-		Button btnFortryd = new Button(shlSlet, SWT.NONE);
-		btnFortryd.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				shlSlet.close();
-			}
-		});
-		btnFortryd.setText("Fortryd");
+				});
+				btnSlet.setText("Slet");
+				
+						Button btnFortryd = new Button(composite, SWT.NONE);
+						btnFortryd.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
+						btnFortryd.addSelectionListener(new SelectionAdapter() {
+							@Override
+							public void widgetSelected(SelectionEvent e) {
+								shlSlet.close();
+							}
+						});
+						btnFortryd.setText("Fortryd");
 
 	}
 

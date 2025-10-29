@@ -11,11 +11,40 @@
     <artifactId>org.eclipse.swt.win32.win32.x86_64</artifactId>
     <version>4.3</version>
 </dependency>
-<!-- https://mvnrepository.com/artifact/org.postgresql/postgresql -->
+		<!-- https://mvnrepository.com/artifact/org.postgresql/postgresql -->
 <dependency>
     <groupId>org.postgresql</groupId>
     <artifactId>postgresql</artifactId>
     <version>42.7.8</version>
+</dependency>
+<dependency>
+    <groupId>org.eclipse.core</groupId>
+    <artifactId>org.eclipse.core.commands</artifactId>
+    <version>3.6.0</version>
+</dependency>
+		<!-- https://mvnrepository.com/artifact/org.eclipse.platform/org.eclipse.equinox.common -->
+<dependency>
+    <groupId>org.eclipse.platform</groupId>
+    <artifactId>org.eclipse.equinox.common</artifactId>
+    <version>3.20.200</version>
+</dependency>
+		<!-- https://mvnrepository.com/artifact/org.eclipse.platform/org.eclipse.jface -->
+<dependency>
+    <groupId>org.eclipse.platform</groupId>
+    <artifactId>org.eclipse.jface</artifactId>
+    <version>3.38.0</version>
+</dependency>
+		<!-- https://mvnrepository.com/artifact/org.eclipse.osgi/org.eclipse.osgi -->
+<dependency>
+    <groupId>org.eclipse.osgi</groupId>
+    <artifactId>org.eclipse.osgi</artifactId>
+    <version>3.7.1</version>
+</dependency>
+		<!-- https://mvnrepository.com/artifact/org.eclipse.platform/org.eclipse.ui.workbench -->
+<dependency>
+    <groupId>org.eclipse.platform</groupId>
+    <artifactId>org.eclipse.ui.workbench</artifactId>
+    <version>3.136.0</version>
 </dependency>
   </dependencies>
   <url>ww.myerichsen.net</url>

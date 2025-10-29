@@ -7,5 +7,4 @@ Bundle-ClassPath: Plader.jar,
  swing2swt.jar
 Automatic-Module-Name: Plader
 Bundle-RequiredExecutionEnvironment: JavaSE-17
-Export-Package: net.myerichsen.plader,
- swing2swt.layout
+Export-Package: net.myerichsen.plader
