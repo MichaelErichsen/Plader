@@ -12,7 +12,9 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
@@ -20,8 +22,6 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.layout.RowLayout;
 
 /**
  * Slet en plade fra pladesamlingen
@@ -96,7 +96,7 @@ public class SletDialog extends Dialog {
 	 */
 	private void createContents(Connection connection, TableItem tableItem) {
 		shlSlet = new Shell(getParent(), getStyle());
-		shlSlet.setSize(450, 410);
+		shlSlet.setSize(450, 426);
 		shlSlet.setText("Slet en plade");
 		shlSlet.setLayout(new GridLayout(2, false));
 
@@ -183,13 +183,13 @@ public class SletDialog extends Dialog {
 		populateDialog(connection, tableItem);
 		new Label(shlSlet, SWT.NONE);
 				new Label(shlSlet, SWT.NONE);
-		
+
 		composite = new Composite(shlSlet, SWT.NONE);
 		RowLayout rl_composite = new RowLayout(SWT.HORIZONTAL);
 		rl_composite.pack = false;
 		composite.setLayout(rl_composite);
 		composite.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, true, false, 2, 1));
-		
+
 				Button btnSlet = new Button(composite, SWT.NONE);
 				btnSlet.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
 				btnSlet.addSelectionListener(new SelectionAdapter() {
@@ -200,7 +200,7 @@ public class SletDialog extends Dialog {
 
 				});
 				btnSlet.setText("Slet");
-				
+
 						Button btnFortryd = new Button(composite, SWT.NONE);
 						btnFortryd.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
 						btnFortryd.addSelectionListener(new SelectionAdapter() {

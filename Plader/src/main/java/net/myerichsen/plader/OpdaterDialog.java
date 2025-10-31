@@ -97,7 +97,7 @@ public class OpdaterDialog extends Dialog {
 	 */
 	private void createContents(Connection connection, TableItem tableItem) {
 		shlOpdater = new Shell(getParent(), getStyle());
-		shlOpdater.setSize(450, 391);
+		shlOpdater.setSize(450, 426);
 		shlOpdater.setText("Opdatér en plade");
 		shlOpdater.setLayout(new GridLayout(2, false));
 
@@ -142,8 +142,8 @@ public class OpdaterDialog extends Dialog {
 		spinnerVolume = new Spinner(shlOpdater, SWT.BORDER);
 		spinnerVolume.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
 		spinnerVolume.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		spinnerVolume.setMinimum(1);
-		spinnerVolume.setSelection(1);
+		spinnerVolume.setMinimum(0);
+		spinnerVolume.setSelection(0);
 
 		lblMedium = new Label(shlOpdater, SWT.NONE);
 		lblMedium.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));

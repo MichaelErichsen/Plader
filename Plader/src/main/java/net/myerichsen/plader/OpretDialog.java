@@ -13,8 +13,10 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
@@ -22,8 +24,6 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.layout.RowLayout;
 
 /**
  * Opret en plade i en pladesamling
@@ -96,7 +96,7 @@ public class OpretDialog extends Dialog {
 	 */
 	private void createContents() {
 		shlOpretEnNy = new Shell(getParent(), getStyle());
-		shlOpretEnNy.setSize(450, 391);
+		shlOpretEnNy.setSize(450, 426);
 		shlOpretEnNy.setText("Opret en ny plade");
 		shlOpretEnNy.setLayout(new GridLayout(2, false));
 
@@ -138,8 +138,8 @@ public class OpretDialog extends Dialog {
 
 		spinnerVolume = new Spinner(shlOpretEnNy, SWT.BORDER);
 		spinnerVolume.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
-		spinnerVolume.setSelection(1);
-		spinnerVolume.setMinimum(1);
+		spinnerVolume.setSelection(0);
+		spinnerVolume.setMinimum(0);
 		spinnerVolume.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		spinnerVolume.addListener(SWT.KeyDown, event -> event.doit = Character.isDigit(event.character));
 
@@ -184,7 +184,7 @@ public class OpretDialog extends Dialog {
 		textOprettet.setEditable(false);
 		textOprettet.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		textOprettet.setText(LocalDate.now().toString());
-		
+
 		composite = new Composite(shlOpretEnNy, SWT.NONE);
 		RowLayout rl_composite = new RowLayout(SWT.HORIZONTAL);
 		rl_composite.pack = false;
@@ -201,7 +201,7 @@ public class OpretDialog extends Dialog {
 
 		});
 		btnOpret.setText("Opret");
-		
+
 				Button btnFortryd = new Button(composite, SWT.NONE);
 				btnFortryd.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
 				btnFortryd.addSelectionListener(new SelectionAdapter() {

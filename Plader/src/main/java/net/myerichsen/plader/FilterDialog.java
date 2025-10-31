@@ -15,18 +15,17 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.layout.RowLayout;
 
 /**
  * Filtrering af items
@@ -38,11 +37,11 @@ public class FilterDialog extends Dialog {
 	protected Shell shlFiltrerPlader;
 	private Text textForlag;
 	private Text textNummer;
-	private Spinner spinnerAar;
+	private Text spinnerAar;
 	private Text textOprettet;
-	private Spinner spinnerAntal;
+	private Text spinnerAntal;
 	private Combo comboMedium;
-	private Spinner spinnerVolume;
+	private Text spinnerVolume;
 	private Text textTitel;
 	private Text textKunstner;
 	private Connection connection;
@@ -57,10 +56,6 @@ public class FilterDialog extends Dialog {
 	private LocalResourceManager localResourceManager;
 	private Composite composite;
 
-//	private LocalResourceManager localResourceManager;
-//	private void createResourceManager() {
-//		localResourceManager = new LocalResourceManager(JFaceResources.getResources());
-//	}
 	/**
 	 * Create the dialog.
 	 *
@@ -102,7 +97,7 @@ public class FilterDialog extends Dialog {
 	 */
 	private void createContents() {
 		shlFiltrerPlader = new Shell(getParent(), getStyle());
-		shlFiltrerPlader.setSize(450, 400);
+		shlFiltrerPlader.setSize(450, 426);
 		shlFiltrerPlader.setText("Opret en ny plade");
 		shlFiltrerPlader.setLayout(new GridLayout(2, false));
 
@@ -142,12 +137,9 @@ public class FilterDialog extends Dialog {
 		lblVolume.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
 		lblVolume.setText("Volume");
 
-		spinnerVolume = new Spinner(shlFiltrerPlader, SWT.BORDER);
+		spinnerVolume = new Text(shlFiltrerPlader, SWT.BORDER);
 		spinnerVolume.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
-		spinnerVolume.setMinimum(1);
-		spinnerVolume.setSelection(1);
 		spinnerVolume.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		spinnerVolume.addListener(SWT.KeyDown, event -> event.doit = Character.isDigit(event.character));
 
 		lblMedium = new Label(shlFiltrerPlader, SWT.NONE);
 		lblMedium.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
@@ -163,21 +155,17 @@ public class FilterDialog extends Dialog {
 		lblAntal.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
 		lblAntal.setText("Antal");
 
-		spinnerAntal = new Spinner(shlFiltrerPlader, SWT.BORDER);
+		spinnerAntal = new Text(shlFiltrerPlader, SWT.BORDER);
 		spinnerAntal.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
-		spinnerAntal.setMinimum(1);
 		spinnerAntal.setSelection(1);
 		spinnerAntal.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		spinnerAntal.addListener(SWT.KeyDown, event -> event.doit = Character.isDigit(event.character));
 
 		lblAar = new Label(shlFiltrerPlader, SWT.NONE);
 		lblAar.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
 		lblAar.setText("År");
 
-		spinnerAar = new Spinner(shlFiltrerPlader, SWT.BORDER);
+		spinnerAar = new Text(shlFiltrerPlader, SWT.BORDER);
 		spinnerAar.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
-		spinnerAar.setMaximum(2030);
-		spinnerAar.setMinimum(1948);
 		spinnerAar.setSelection(1968);
 		spinnerAar.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
@@ -189,7 +177,7 @@ public class FilterDialog extends Dialog {
 		textOprettet.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
 		textOprettet.setEditable(false);
 		textOprettet.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		
+
 		composite = new Composite(shlFiltrerPlader, SWT.NONE);
 		RowLayout rl_composite = new RowLayout(SWT.HORIZONTAL);
 		rl_composite.pack = false;
@@ -206,16 +194,16 @@ public class FilterDialog extends Dialog {
 
 		});
 		btnFiltrer.setText("Filtrér");
-		
-				Button btnFortryd = new Button(composite, SWT.NONE);
-				btnFortryd.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
-				btnFortryd.addSelectionListener(new SelectionAdapter() {
-					@Override
-					public void widgetSelected(SelectionEvent e) {
-						shlFiltrerPlader.close();
-					}
-				});
-				btnFortryd.setText("Fortryd");
+
+		Button btnFortryd = new Button(composite, SWT.NONE);
+		btnFortryd.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
+		btnFortryd.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				shlFiltrerPlader.close();
+			}
+		});
+		btnFortryd.setText("Fortryd");
 
 	}
 
