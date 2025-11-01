@@ -98,7 +98,7 @@ public class FilterDialog extends Dialog {
 	private void createContents() {
 		shlFiltrerPlader = new Shell(getParent(), SWT.SHELL_TRIM | SWT.TITLE);
 		shlFiltrerPlader.setSize(450, 468);
-		shlFiltrerPlader.setText("Opret en ny plade");
+		shlFiltrerPlader.setText("Filtrér plader");
 		shlFiltrerPlader.setLayout(new GridLayout(2, false));
 
 		Label lblForlag = new Label(shlFiltrerPlader, SWT.NONE);
