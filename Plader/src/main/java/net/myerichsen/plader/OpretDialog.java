@@ -95,8 +95,8 @@ public class OpretDialog extends Dialog {
 	 * Create contents of the dialog.
 	 */
 	private void createContents() {
-		shlOpretEnNy = new Shell(getParent(), getStyle());
-		shlOpretEnNy.setSize(450, 426);
+		shlOpretEnNy = new Shell(getParent(), SWT.SHELL_TRIM | SWT.TITLE);
+		shlOpretEnNy.setSize(450, 468);
 		shlOpretEnNy.setText("Opret en ny plade");
 		shlOpretEnNy.setLayout(new GridLayout(2, false));
 
@@ -152,6 +152,7 @@ public class OpretDialog extends Dialog {
 		comboMedium.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		comboMedium.add("CD");
 		comboMedium.add("LP");
+		comboMedium.add("MC");
 
 		lblAntal = new Label(shlOpretEnNy, SWT.NONE);
 		lblAntal.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
@@ -258,7 +259,7 @@ public class OpretDialog extends Dialog {
 			}
 			messageBox.open();
 
-			shlOpretEnNy.close();
+			return;
 		} catch (
 
 		SQLException e) {
@@ -266,6 +267,7 @@ public class OpretDialog extends Dialog {
 			messageBox.setMessage(e.getMessage());
 			messageBox.open();
 			e.printStackTrace();
+			return;
 		}
 	}
 }

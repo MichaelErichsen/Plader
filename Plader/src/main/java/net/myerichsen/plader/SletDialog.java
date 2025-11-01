@@ -95,8 +95,8 @@ public class SletDialog extends Dialog {
 	 * @param connection
 	 */
 	private void createContents(Connection connection, TableItem tableItem) {
-		shlSlet = new Shell(getParent(), getStyle());
-		shlSlet.setSize(450, 426);
+		shlSlet = new Shell(getParent(), SWT.SHELL_TRIM | SWT.TITLE);
+		shlSlet.setSize(450, 468);
 		shlSlet.setText("Slet en plade");
 		shlSlet.setLayout(new GridLayout(2, false));
 
@@ -181,8 +181,6 @@ public class SletDialog extends Dialog {
 		textOprettet.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
 		populateDialog(connection, tableItem);
-		new Label(shlSlet, SWT.NONE);
-				new Label(shlSlet, SWT.NONE);
 
 		composite = new Composite(shlSlet, SWT.NONE);
 		RowLayout rl_composite = new RowLayout(SWT.HORIZONTAL);

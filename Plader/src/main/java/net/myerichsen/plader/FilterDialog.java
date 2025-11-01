@@ -96,8 +96,8 @@ public class FilterDialog extends Dialog {
 	 * Create contents of the dialog.
 	 */
 	private void createContents() {
-		shlFiltrerPlader = new Shell(getParent(), getStyle());
-		shlFiltrerPlader.setSize(450, 426);
+		shlFiltrerPlader = new Shell(getParent(), SWT.SHELL_TRIM | SWT.TITLE);
+		shlFiltrerPlader.setSize(450, 468);
 		shlFiltrerPlader.setText("Opret en ny plade");
 		shlFiltrerPlader.setLayout(new GridLayout(2, false));
 
@@ -150,6 +150,7 @@ public class FilterDialog extends Dialog {
 		comboMedium.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		comboMedium.add("CD");
 		comboMedium.add("LP");
+		comboMedium.add("MC");
 
 		lblAntal = new Label(shlFiltrerPlader, SWT.NONE);
 		lblAntal.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));

@@ -109,6 +109,7 @@ public class Plader {
 					MessageBox messageBox = new MessageBox(shlErichsensPladesamling_1, SWT.ICON_WARNING);
 					messageBox.setMessage("Vælg venligst en række!");
 					messageBox.open();
+					return;
 				}
 
 				TableItem tableItem = selection[0];

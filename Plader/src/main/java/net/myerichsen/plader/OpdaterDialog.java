@@ -96,8 +96,8 @@ public class OpdaterDialog extends Dialog {
 	 * @param connection
 	 */
 	private void createContents(Connection connection, TableItem tableItem) {
-		shlOpdater = new Shell(getParent(), getStyle());
-		shlOpdater.setSize(450, 426);
+		shlOpdater = new Shell(getParent(), SWT.SHELL_TRIM | SWT.TITLE);
+		shlOpdater.setSize(450, 468);
 		shlOpdater.setText("Opdatér en plade");
 		shlOpdater.setLayout(new GridLayout(2, false));
 
@@ -142,8 +142,6 @@ public class OpdaterDialog extends Dialog {
 		spinnerVolume = new Spinner(shlOpdater, SWT.BORDER);
 		spinnerVolume.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
 		spinnerVolume.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		spinnerVolume.setMinimum(0);
-		spinnerVolume.setSelection(0);
 
 		lblMedium = new Label(shlOpdater, SWT.NONE);
 		lblMedium.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
@@ -154,6 +152,7 @@ public class OpdaterDialog extends Dialog {
 		comboMedium.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		comboMedium.add("CD");
 		comboMedium.add("LP");
+		comboMedium.add("MC");
 
 		lblAntal = new Label(shlOpdater, SWT.NONE);
 		lblAntal.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
@@ -227,8 +226,6 @@ public class OpdaterDialog extends Dialog {
 		textNummer.setText(tableItem.getText(1));
 		textKunstner.setText(tableItem.getText(2));
 		textTitel.setText(tableItem.getText(3));
-		spinnerVolume.setMinimum(1);
-		spinnerVolume.setSelection(1);
 		comboMedium.setText(tableItem.getText(5));
 		spinnerAntal.setMinimum(1);
 		spinnerAntal.setSelection(1);
@@ -272,7 +269,7 @@ public class OpdaterDialog extends Dialog {
 			}
 			messageBox.open();
 
-			shlOpdater.close();
+			return;
 		} catch (
 
 		SQLException e) {
@@ -280,6 +277,7 @@ public class OpdaterDialog extends Dialog {
 			messageBox.setMessage(e.getMessage());
 			messageBox.open();
 			e.printStackTrace();
+			return;
 		}
 	}
 }
