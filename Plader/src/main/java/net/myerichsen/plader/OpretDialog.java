@@ -1,14 +1,21 @@
 package net.myerichsen.plader;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.Properties;
 
 import org.eclipse.jface.resource.FontDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.LocalResourceManager;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -52,6 +59,9 @@ public class OpretDialog extends Dialog {
 	private Label lblOprettet;
 	private LocalResourceManager localResourceManager;
 	private Composite composite;
+	private static String propertyPath = System.getProperty("user.home") + File.separator + "plader.properties";
+	private static Properties properties;
+	private Label lblNewLabel;
 
 	/**
 	 * Create the dialog.
@@ -63,6 +73,20 @@ public class OpretDialog extends Dialog {
 		super(parent, style);
 		createResourceManager();
 		setText("SWT Dialog");
+
+		try {
+			properties = new Properties();
+			properties.load(new FileInputStream(propertyPath));
+		} catch (Exception e) {
+			try {
+				properties.store(new FileWriter(propertyPath), "Plader");
+				properties.load(new FileInputStream(propertyPath));
+			} catch (IOException e1) {
+				MessageBox messageBox = new MessageBox(shlOpretEnNy, SWT.ICON_WARNING);
+				messageBox.setMessage(e1.getMessage());
+				messageBox.open();
+			}
+		}
 	}
 
 	private void createResourceManager() {
@@ -78,7 +102,7 @@ public class OpretDialog extends Dialog {
 	 * @return the result
 	 */
 	public Plade open(Connection connection) {
-		this.connection = connection;
+		connection = this.connection = connection;
 		createContents();
 		shlOpretEnNy.open();
 		shlOpretEnNy.layout();
@@ -96,7 +120,7 @@ public class OpretDialog extends Dialog {
 	 */
 	private void createContents() {
 		shlOpretEnNy = new Shell(getParent(), SWT.SHELL_TRIM | SWT.TITLE);
-		shlOpretEnNy.setSize(450, 468);
+		shlOpretEnNy.setSize(559, 468);
 		shlOpretEnNy.setText("Opret en ny plade");
 		shlOpretEnNy.setLayout(new GridLayout(2, false));
 
@@ -105,6 +129,14 @@ public class OpretDialog extends Dialog {
 		lblForlag.setText("Forlag");
 
 		textForlag = new Text(shlOpretEnNy, SWT.BORDER);
+		textForlag.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if (e.keyCode == SWT.F3) {
+					textForlag.setText(properties.getProperty("forlag", ""));
+				}
+			}
+		});
 		textForlag.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
 		textForlag.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
@@ -121,6 +153,14 @@ public class OpretDialog extends Dialog {
 		lblKunstner.setText("Kunstner");
 
 		textKunstner = new Text(shlOpretEnNy, SWT.BORDER);
+		textKunstner.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if (e.keyCode == SWT.F3) {
+					textKunstner.setText(properties.getProperty("kunstner", ""));
+				}
+			}
+		});
 		textKunstner.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
 		textKunstner.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
@@ -171,8 +211,8 @@ public class OpretDialog extends Dialog {
 
 		spinnerAar = new Spinner(shlOpretEnNy, SWT.BORDER);
 		spinnerAar.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
-		spinnerAar.setMaximum(2030);
 		spinnerAar.setMinimum(1948);
+		spinnerAar.setMaximum(2030);
 		spinnerAar.setSelection(1968);
 		spinnerAar.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
@@ -187,10 +227,12 @@ public class OpretDialog extends Dialog {
 		textOprettet.setText(LocalDate.now().toString());
 
 		composite = new Composite(shlOpretEnNy, SWT.NONE);
-		RowLayout rl_composite = new RowLayout(SWT.HORIZONTAL);
-		rl_composite.pack = false;
-		composite.setLayout(rl_composite);
+		composite.setLayout(new RowLayout(SWT.HORIZONTAL));
 		composite.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 2, 1));
+
+		lblNewLabel = new Label(composite, SWT.NONE);
+		lblNewLabel.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
+		lblNewLabel.setText("F3 ved Forlag eller kunstner henter seneste  ");
 
 		Button btnOpret = new Button(composite, SWT.NONE);
 		btnOpret.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
@@ -198,20 +240,21 @@ public class OpretDialog extends Dialog {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				opretPlade();
+				shlOpretEnNy.close();
 			}
 
 		});
 		btnOpret.setText("Opret");
 
-				Button btnFortryd = new Button(composite, SWT.NONE);
-				btnFortryd.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
-				btnFortryd.addSelectionListener(new SelectionAdapter() {
-					@Override
-					public void widgetSelected(SelectionEvent e) {
-						shlOpretEnNy.close();
-					}
-				});
-				btnFortryd.setText("Fortryd");
+		Button btnFortryd = new Button(composite, SWT.NONE);
+		btnFortryd.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
+		btnFortryd.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				shlOpretEnNy.close();
+			}
+		});
+		btnFortryd.setText("Fortryd");
 
 	}
 
@@ -235,8 +278,8 @@ public class OpretDialog extends Dialog {
 
 			PreparedStatement statement = connection.prepareStatement(update);
 
-			statement.setString(1, textForlag.getText());
-			statement.setString(2, textNummer.getText());
+			statement.setString(1, textForlag.getText().toUpperCase());
+			statement.setString(2, textNummer.getText().toUpperCase());
 			statement.setString(3, textKunstner.getText());
 			statement.setString(4, textTitel.getText());
 			statement.setInt(5, Integer.parseInt(spinnerVolume.getText()));
@@ -254,11 +297,18 @@ public class OpretDialog extends Dialog {
 						textTitel.getText(), Integer.parseInt(spinnerVolume.getText()), comboMedium.getText(),
 						Integer.parseInt(spinnerAntal.getText()), Integer.parseInt(spinnerAar.getText()),
 						textOprettet.getText());
+				properties.setProperty("forlag", textForlag.getText());
+				properties.setProperty("kunstner", textKunstner.getText());
+
+				try {
+					properties.store(new FileWriter(propertyPath), "Plader");
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			} else {
 				messageBox.setMessage("Ny plade er ikke oprettet");
 			}
 			messageBox.open();
-
 			return;
 		} catch (
 

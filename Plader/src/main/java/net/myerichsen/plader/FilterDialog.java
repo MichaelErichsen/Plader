@@ -55,6 +55,7 @@ public class FilterDialog extends Dialog {
 	private Table tablePlader;
 	private LocalResourceManager localResourceManager;
 	private Composite composite;
+	private Button btnStarterMed;
 
 	/**
 	 * Create the dialog.
@@ -185,16 +186,26 @@ public class FilterDialog extends Dialog {
 		composite.setLayout(rl_composite);
 		composite.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 2, 1));
 
-		Button btnFiltrer = new Button(composite, SWT.NONE);
-		btnFiltrer.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
-		btnFiltrer.addSelectionListener(new SelectionAdapter() {
+		btnStarterMed = new Button(composite, SWT.NONE);
+		btnStarterMed.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
+		btnStarterMed.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				result = filtrerPlade(connection, tablePlader);
+				result = filtrerPladerStarts(connection, tablePlader);
+			}
+		});
+		btnStarterMed.setText("Starter med ....");
+
+		Button btnIndeholder = new Button(composite, SWT.NONE);
+		btnIndeholder.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
+		btnIndeholder.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				result = filtrerPladeLike(connection, tablePlader);
 			}
 
 		});
-		btnFiltrer.setText("Filtrér");
+		btnIndeholder.setText("Indeholder...");
 
 		Button btnFortryd = new Button(composite, SWT.NONE);
 		btnFortryd.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
@@ -208,14 +219,7 @@ public class FilterDialog extends Dialog {
 
 	}
 
-	/**
-	 * Filtrer udvalgte plader
-	 *
-	 * @param connection
-	 * @param tablePlader
-	 * @return
-	 */
-	private List<Plade> filtrerPlade(Connection connection, Table tablePlader) {
+	private List<Plade> filtrerPladerStarts(Connection connection2, Table tablePlader2) {
 		List<Plade> list = new ArrayList<>();
 		String[] values = new String[6];
 		String[] fieldNames = new String[6];
@@ -272,10 +276,115 @@ public class FilterDialog extends Dialog {
 		}
 
 		sb.append(String.join(") LIKE LOWER (?) AND LOWER (", fieldNames2));
-		sb.append(") LIKE LOWER (?) ORDER BY KUNSTNER");
+		sb.append(") LIKE LOWER (?) ORDER BY KUNSTNER, AAR");
 
 		String query = sb.toString();
-		System.out.println(query);
+
+		try {
+			statement = connection.prepareStatement(query);
+
+			for (int j = 0; j < i; j++) {
+				statement.setString(j + 1, values[j] + "%");
+			}
+
+			rs = statement.executeQuery();
+
+			while (rs.next()) {
+				try {
+					aar = rs.getInt("AAR");
+				} catch (Exception e) {
+
+				}
+
+				Plade plade = new Plade(rs.getString("FORLAG"), rs.getString("NUMMER"), rs.getString("KUNSTNER"),
+						rs.getString("TITEL"), rs.getInt("VOLUME"), rs.getString("MEDIUM"), rs.getInt("ANTAL"), aar,
+						rs.getString("OPRETTET"));
+
+				list.add(plade);
+			}
+
+			shlFiltrerPlader.close();
+			return list;
+		} catch (
+
+		SQLException e) {
+			MessageBox messageBox = new MessageBox(shlFiltrerPlader, SWT.ICON_ERROR);
+			messageBox.setMessage(e.getMessage());
+			messageBox.open();
+			e.printStackTrace();
+
+			return list;
+		}
+
+	}
+
+	/**
+	 * Filtrer udvalgte plader
+	 *
+	 * @param connection
+	 * @param tablePlader
+	 * @return
+	 */
+	private List<Plade> filtrerPladeLike(Connection connection, Table tablePlader) {
+		List<Plade> list = new ArrayList<>();
+		String[] values = new String[6];
+		String[] fieldNames = new String[6];
+		int aar = 0;
+		int i = 0;
+		PreparedStatement statement;
+		ResultSet rs;
+
+		if (textForlag.getText().isEmpty() && textNummer.getText().isEmpty() && textKunstner.getText().isEmpty()
+				&& textTitel.getText().isEmpty() && comboMedium.getText().isEmpty() && spinnerAar.getText().isEmpty()) {
+			MessageBox messageBox = new MessageBox(shlFiltrerPlader, SWT.ICON_WARNING);
+			messageBox.setMessage("Mindst ét felt skal udfyldes!");
+			messageBox.open();
+			return list;
+		}
+
+		StringBuilder sb = new StringBuilder("SELECT * FROM PLADE WHERE LOWER (");
+
+		if (!textForlag.getText().isBlank()) {
+			fieldNames[i] = "FORLAG";
+			values[i] = textForlag.getText();
+			i++;
+		}
+		if (!textNummer.getText().isBlank()) {
+			fieldNames[i] = "NUMMER";
+			values[i] = textNummer.getText();
+			i++;
+		}
+		if (!textKunstner.getText().isBlank()) {
+			fieldNames[i] = "KUNSTNER";
+			values[i] = textKunstner.getText();
+			i++;
+		}
+		if (!textTitel.getText().isBlank()) {
+			fieldNames[i] = "TITEL";
+			values[i] = textTitel.getText();
+			i++;
+		}
+		if (!comboMedium.getText().isBlank()) {
+			fieldNames[i] = "MEDIUM";
+			values[i] = comboMedium.getText();
+			i++;
+		}
+		if (!spinnerAar.getText().isBlank()) {
+			fieldNames[i] = "AAR";
+			values[i] = spinnerAar.getText();
+			i++;
+		}
+
+		String[] fieldNames2 = new String[i];
+
+		for (int j = 0; j < i; j++) {
+			fieldNames2[j] = fieldNames[j];
+		}
+
+		sb.append(String.join(") LIKE LOWER (?) AND LOWER (", fieldNames2));
+		sb.append(") LIKE LOWER (?) ORDER BY KUNSTNER, AAR");
+
+		String query = sb.toString();
 
 		try {
 			statement = connection.prepareStatement(query);

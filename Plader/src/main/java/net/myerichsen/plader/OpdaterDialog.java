@@ -170,8 +170,8 @@ public class OpdaterDialog extends Dialog {
 
 		spinnerAar = new Spinner(shlOpdater, SWT.BORDER);
 		spinnerAar.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
-		spinnerAar.setMaximum(2030);
 		spinnerAar.setMinimum(1948);
+		spinnerAar.setMaximum(2030);
 		spinnerAar.setSelection(1968);
 		spinnerAar.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
@@ -198,6 +198,7 @@ public class OpdaterDialog extends Dialog {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				opdaterPlade(connection);
+				shlOpdater.close();
 			}
 
 		});

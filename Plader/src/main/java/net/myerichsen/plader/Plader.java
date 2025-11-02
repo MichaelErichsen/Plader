@@ -74,7 +74,6 @@ public class Plader {
 				} else {
 					populateFully(shlErichsensPladesamling_1);
 				}
-
 			}
 		});
 		btnFiltrer.setText("Filtrér");
@@ -186,7 +185,7 @@ public class Plader {
 		tblclmnAntal.setText("Antal");
 
 		TableColumn tblclmnAar = new TableColumn(tablePlader, SWT.NONE);
-		tblclmnAar.setWidth(52);
+		tblclmnAar.setWidth(73);
 		tblclmnAar.setText("År");
 
 		TableColumn tblclmnOprettet = new TableColumn(tablePlader, SWT.NONE);
@@ -211,7 +210,7 @@ public class Plader {
 	private static void populateFully(Shell shlErichsensPladesamling) {
 		try {
 			connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/postgres", "postgres", "admin");
-			udenFilter = connection.prepareStatement("SELECT * FROM PLADE ORDER BY KUNSTNER");
+			udenFilter = connection.prepareStatement("SELECT * FROM PLADE ORDER BY KUNSTNER, AAR");
 			rs = udenFilter.executeQuery();
 
 			while (rs.next()) {
