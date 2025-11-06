@@ -30,7 +30,7 @@ public class RetOprettetDato {
 			PreparedStatement psU = connection.prepareStatement("UPDATE PLADE SET OPRETTET = ? WHERE OPRETTET = ?");
 			List<String> liste = new ArrayList<>();
 			String rettet = "";
-			Pattern pattern = Pattern.compile("(\\d{2})-(\\d{2})-(\\d{4})\\s\\d{2}:\\d{2}");
+			Pattern pattern = Pattern.compile("(\d{2})-(\d{2})-(\d{4})\s\d{2}:\d{2}");
 			Matcher matcher = null;
 			ResultSet rs = psL.executeQuery();
 
