@@ -10,13 +10,35 @@ import org.eclipse.swt.widgets.TableItem;
  * @author Michael Erichsen
  */
 public class Plade {
-	@Override
-	public String toString() {
-		return "Plade [forlag=" + forlag + ", nummer=" + nummer + ", kunstner=" + kunstner + ", titel=" + titel
-				+ ", volume=" + volume + ", medium=" + medium + ", antal=" + antal + ", aar=" + aar + ", oprettet="
-				+ oprettet + "]";
-	}
+	private int antal;
 
+	private String forlag;
+
+	private String kunstner;
+
+	private String medium;
+
+	private String nummer;
+
+	private String oprettet;
+
+	private String titel;
+
+	private int volume;
+
+	private int aar;
+
+	/**
+	 * @param forlag
+	 * @param nummer
+	 * @param kunstner
+	 * @param titel
+	 * @param volume
+	 * @param medium
+	 * @param antal
+	 * @param aar
+	 * @param oprettet
+	 */
 	public Plade(String forlag, String nummer, String kunstner, String titel, int volume, String medium, int antal,
 			int aar, String oprettet) {
 		super();
@@ -31,6 +53,10 @@ public class Plade {
 		this.oprettet = oprettet;
 	}
 
+	/**
+	 * @param table
+	 * @return item
+	 */
 	public TableItem addItem(Table table) {
 		TableItem item = new TableItem(table, SWT.NONE);
 		String[] sa = new String[] { forlag, nummer, kunstner, titel, String.valueOf(volume), medium,
@@ -39,85 +65,136 @@ public class Plade {
 		return item;
 	}
 
-	public String getForlag() {
-		return forlag;
-	}
-
-	public void setForlag(String forlag) {
-		this.forlag = forlag;
-	}
-
-	public String getNummer() {
-		return nummer;
-	}
-
-	public void setNummer(String nummer) {
-		this.nummer = nummer;
-	}
-
-	public String getKunstner() {
-		return kunstner;
-	}
-
-	public void setKunstner(String kunstner) {
-		this.kunstner = kunstner;
-	}
-
-	public String getTitel() {
-		return titel;
-	}
-
-	public void setTitel(String titel) {
-		this.titel = titel;
-	}
-
-	public int getVolume() {
-		return volume;
-	}
-
-	public void setVolume(int volume) {
-		this.volume = volume;
-	}
-
-	public String getMedium() {
-		return medium;
-	}
-
-	public void setMedium(String medium) {
-		this.medium = medium;
-	}
-
+	/**
+	 * @return antal
+	 */
 	public int getAntal() {
 		return antal;
 	}
 
-	public void setAntal(int antal) {
-		this.antal = antal;
+	/**
+	 * @return forlag
+	 */
+	public String getForlag() {
+		return forlag;
 	}
 
-	public int getAar() {
-		return aar;
+	/**
+	 * @return kunstner
+	 */
+	public String getKunstner() {
+		return kunstner;
 	}
 
-	public void setAar(int aar) {
-		this.aar = aar;
+	/**
+	 * @return medium
+	 */
+	public String getMedium() {
+		return medium;
 	}
 
+	/**
+	 * @return nummer
+	 */
+	public String getNummer() {
+		return nummer;
+	}
+
+	/**
+	 * @return oprettet
+	 */
 	public String getOprettet() {
 		return oprettet;
 	}
 
+	/**
+	 * @return titel
+	 */
+	public String getTitel() {
+		return titel;
+	}
+
+	/**
+	 * @return volume
+	 */
+	public int getVolume() {
+		return volume;
+	}
+
+	/**
+	 * @return aar
+	 */
+	public int getAar() {
+		return aar;
+	}
+
+	/**
+	 * @param antal
+	 */
+	public void setAntal(int antal) {
+		this.antal = antal;
+	}
+
+	/**
+	 * @param forlag
+	 */
+	public void setForlag(String forlag) {
+		this.forlag = forlag;
+	}
+
+	/**
+	 * @param kunstner
+	 */
+	public void setKunstner(String kunstner) {
+		this.kunstner = kunstner;
+	}
+
+	/**
+	 * @param medium
+	 */
+	public void setMedium(String medium) {
+		this.medium = medium;
+	}
+
+	/**
+	 * @param nummer
+	 */
+	public void setNummer(String nummer) {
+		this.nummer = nummer;
+	}
+
+	/**
+	 * @param oprettet
+	 */
 	public void setOprettet(String oprettet) {
 		this.oprettet = oprettet;
 	}
 
-	private String forlag;
-	private String nummer;
-	private String kunstner;
-	private String titel;
-	private int volume;
-	private String medium;
-	private int antal;
-	private int aar;
-	private String oprettet;
+	/**
+	 * @param titel
+	 */
+	public void setTitel(String titel) {
+		this.titel = titel;
+	}
+
+	/**
+	 * @param volume
+	 */
+	public void setVolume(int volume) {
+		this.volume = volume;
+	}
+
+	/**
+	 * @param aar
+	 */
+	public void setAar(int aar) {
+		this.aar = aar;
+	}
+
+	@Override
+	public String toString() {
+		return "Plade [forlag=" + forlag + ", nummer=" + nummer + ", kunstner=" + kunstner + ", titel=" + titel
+				+ ", volume=" + volume + ", medium=" + medium + ", antal=" + antal + ", aar=" + aar + ", oprettet="
+				+ oprettet + "]";
+	}
 }

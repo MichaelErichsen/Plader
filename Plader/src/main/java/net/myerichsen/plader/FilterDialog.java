@@ -76,7 +76,9 @@ public class FilterDialog extends Dialog {
 	/**
 	 * Open the dialog.
 	 *
-	 * @return the result
+	 * @param connection
+	 * @param tablePlader
+	 * @return List<Plader>
 	 */
 	public List<Plade> open(Connection connection, Table tablePlader) {
 		this.connection = connection;
