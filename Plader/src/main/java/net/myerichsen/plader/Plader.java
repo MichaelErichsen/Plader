@@ -1,11 +1,14 @@
 package net.myerichsen.plader;
 
+import java.awt.Desktop;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.List;
 
 import org.eclipse.jface.resource.FontDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
@@ -47,7 +50,7 @@ public class Plader {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		Display display = Display.getDefault();
+		final var display = Display.getDefault();
 		shlErichsensPladesamling_1 = new Shell();
 		createResourceManager();
 		shlErichsensPladesamling_1.setMinimumSize(new Point(1200, 380));
@@ -55,140 +58,108 @@ public class Plader {
 		shlErichsensPladesamling_1.setText("Erichsens pladesamling");
 		shlErichsensPladesamling_1.setLayout(new GridLayout(1, false));
 
-		Composite composite = new Composite(shlErichsensPladesamling_1, SWT.NONE);
+		final var composite = new Composite(shlErichsensPladesamling_1, SWT.NONE);
 		composite.setLayout(new RowLayout(SWT.HORIZONTAL));
 
-		Button btnFiltrer = new Button(composite, SWT.NONE);
+		final var btnFiltrer = new Button(composite, SWT.NONE);
 		btnFiltrer.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
 		btnFiltrer.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				FilterDialog filterDialog = new FilterDialog(shlErichsensPladesamling_1, SWT.NONE);
-				List<Plade> pladeListe = filterDialog.open(connection, tablePlader);
-				tablePlader.removeAll();
-
-				if (pladeListe != null) {
-					for (Plade plade : pladeListe) {
-						plade.addItem(tablePlader);
-					}
-				} else {
-					populateFully(shlErichsensPladesamling_1);
-				}
+				filtrerPlader();
 			}
 		});
 		btnFiltrer.setText("Filtrér");
 
-		Button btnOpret = new Button(composite, SWT.NONE);
+		final var btnOpret = new Button(composite, SWT.NONE);
 		btnOpret.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
 		btnOpret.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				OpretDialog opretDialog = new OpretDialog(shlErichsensPladesamling_1, SWT.NONE);
-				Plade plade = opretDialog.open(connection);
-				if (plade != null) {
-					TableItem item2 = plade.addItem(tablePlader);
-					tablePlader.showItem(item2);
-				}
+				opretPlade();
 			}
 		});
 		btnOpret.setText("Opret");
 
-		Label lblVlgEnRkke = new Label(composite, SWT.HORIZONTAL);
+		final var lblVlgEnRkke = new Label(composite, SWT.HORIZONTAL);
 		lblVlgEnRkke.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
 		lblVlgEnRkke.setText("Vælg venligst en række, før du retter eller sletter");
 
-		Button btnRet = new Button(composite, SWT.NONE);
+		final var btnRet = new Button(composite, SWT.NONE);
 		btnRet.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
 		btnRet.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				TableItem[] selection = tablePlader.getSelection();
-
-				if (selection.length < 1) {
-					MessageBox messageBox = new MessageBox(shlErichsensPladesamling_1, SWT.ICON_WARNING);
-					messageBox.setMessage("Vælg venligst en række!");
-					messageBox.open();
-					return;
-				}
-
-				TableItem tableItem = selection[0];
-				int i = tablePlader.getSelectionIndices()[0];
-				OpdaterDialog opdaterDialog = new OpdaterDialog(shlErichsensPladesamling_1, SWT.NONE);
-				Plade plade = opdaterDialog.open(connection, tableItem);
-
-				if (plade != null) {
-					tablePlader.remove(i);
-					plade.addItem(tablePlader);
-				}
+				retPlade();
 			}
 		});
 		btnRet.setText("Ret");
 
-		Button btnSlet = new Button(composite, SWT.NONE);
+		final var btnSlet = new Button(composite, SWT.NONE);
 		btnSlet.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
 		btnSlet.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				TableItem[] selection = tablePlader.getSelection();
-
-				if (selection.length < 1) {
-					MessageBox messageBox = new MessageBox(shlErichsensPladesamling_1, SWT.ICON_WARNING);
-					messageBox.setMessage("Vælg først en række!");
-					messageBox.open();
-				}
-
-				TableItem tableItem = selection[0];
-				int i = tablePlader.getSelectionIndices()[0];
-				SletDialog sletDialog = new SletDialog(shlErichsensPladesamling_1, SWT.NONE);
-				boolean slettet = sletDialog.open(connection, tableItem);
-				if (slettet) {
-					tablePlader.remove(i);
-				}
+				sletPlade();
 			}
 		});
 		btnSlet.setText("Slet");
 
+		final var btnSearchGoogle = new Button(composite, SWT.NONE);
+		btnSearchGoogle.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				try {
+					searchGoogle();
+				} catch (IOException | URISyntaxException e1) {
+					e1.printStackTrace();
+				}
+			}
+		});
+		btnSearchGoogle.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
+		btnSearchGoogle.setText("Søg hos Google");
+
 		tablePlader = new Table(shlErichsensPladesamling_1, SWT.BORDER | SWT.FULL_SELECTION | SWT.SINGLE);
 		tablePlader.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
-		GridData gd_tablePlader = new GridData(SWT.FILL, SWT.TOP, true, true, 1, 1);
+		final var gd_tablePlader = new GridData(SWT.FILL, SWT.TOP, true, true, 1, 1);
 		gd_tablePlader.widthHint = 855;
 		tablePlader.setLayoutData(gd_tablePlader);
 		tablePlader.setHeaderVisible(true);
 		tablePlader.setLinesVisible(true);
 
-		TableColumn tblclmnForlag = new TableColumn(tablePlader, SWT.NONE);
+		final var tblclmnForlag = new TableColumn(tablePlader, SWT.NONE);
 		tblclmnForlag.setWidth(150);
 		tblclmnForlag.setText("Forlag");
 
-		TableColumn tblclmnNummer = new TableColumn(tablePlader, SWT.NONE);
+		final var tblclmnNummer = new TableColumn(tablePlader, SWT.NONE);
 		tblclmnNummer.setWidth(150);
 		tblclmnNummer.setText("Nummer");
 
-		TableColumn tblclmnKunstner = new TableColumn(tablePlader, SWT.NONE);
+		final var tblclmnKunstner = new TableColumn(tablePlader, SWT.NONE);
 		tblclmnKunstner.setWidth(250);
 		tblclmnKunstner.setText("Kunstner");
 
-		TableColumn tblclmnTitel = new TableColumn(tablePlader, SWT.NONE);
+		final var tblclmnTitel = new TableColumn(tablePlader, SWT.NONE);
 		tblclmnTitel.setWidth(250);
 		tblclmnTitel.setText("Titel");
 
-		TableColumn tblclmnVolume = new TableColumn(tablePlader, SWT.NONE);
+		final var tblclmnVolume = new TableColumn(tablePlader, SWT.NONE);
 		tblclmnVolume.setWidth(65);
 		tblclmnVolume.setText("Volume");
 
-		TableColumn tblclmnMedium = new TableColumn(tablePlader, SWT.NONE);
+		final var tblclmnMedium = new TableColumn(tablePlader, SWT.NONE);
 		tblclmnMedium.setWidth(69);
 		tblclmnMedium.setText("Medium");
 
-		TableColumn tblclmnAntal = new TableColumn(tablePlader, SWT.NONE);
+		final var tblclmnAntal = new TableColumn(tablePlader, SWT.NONE);
 		tblclmnAntal.setWidth(50);
 		tblclmnAntal.setText("Antal");
 
-		TableColumn tblclmnAar = new TableColumn(tablePlader, SWT.NONE);
+		final var tblclmnAar = new TableColumn(tablePlader, SWT.NONE);
 		tblclmnAar.setWidth(73);
 		tblclmnAar.setText("År");
 
-		TableColumn tblclmnOprettet = new TableColumn(tablePlader, SWT.NONE);
+		final var tblclmnOprettet = new TableColumn(tablePlader, SWT.NONE);
 		tblclmnOprettet.setWidth(145);
 		tblclmnOprettet.setText("Oprettet");
 		new Label(shlErichsensPladesamling_1, SWT.NONE);
@@ -203,10 +174,33 @@ public class Plader {
 		}
 	}
 
+	/**
+	 * Search Google for record
+	 * 
+	 * @throws URISyntaxException
+	 * @throws IOException
+	 */
+	protected static void searchGoogle() throws IOException, URISyntaxException {
+		TableItem item = tablePlader.getSelection()[0];
+		String url = "https://www.google.com/search?q=" + item.getText(2) + " " + item.getText(3);
+
+		if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
+			Desktop.getDesktop().browse(new URI(url.replace(' ', '+')));
+		}
+	}
+
+	/**
+	 * Prepare font
+	 */
 	private static void createResourceManager() {
 		localResourceManager = new LocalResourceManager(JFaceResources.getResources());
 	}
 
+	/**
+	 * Populate table
+	 * 
+	 * @param shlErichsensPladesamling
+	 */
 	private static void populateFully(Shell shlErichsensPladesamling) {
 		try {
 			connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/postgres", "postgres", "admin");
@@ -224,17 +218,91 @@ public class Plader {
 				item.setText(6, rs.getString("ANTAL"));
 				try {
 					item.setText(7, rs.getString("AAR"));
-				} catch (Exception e) {
+				} catch (final Exception e) {
 					item.setText(7, "");
 				}
 				item.setText(8, rs.getString("OPRETTET"));
 			}
 
-		} catch (SQLException e) {
-			MessageBox messageBox = new MessageBox(shlErichsensPladesamling, SWT.ICON_ERROR);
+		} catch (final SQLException e) {
+			final var messageBox = new MessageBox(shlErichsensPladesamling, SWT.ICON_ERROR);
 			messageBox.setMessage(e.getMessage());
 			messageBox.open();
 			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Update record
+	 */
+	private static void retPlade() {
+		final var selection = tablePlader.getSelection();
+
+		if (selection.length < 1) {
+			final var messageBox = new MessageBox(shlErichsensPladesamling_1, SWT.ICON_WARNING);
+			messageBox.setMessage("Vælg venligst en række!");
+			messageBox.open();
+			return;
+		}
+
+		final var tableItem = selection[0];
+		final var i = tablePlader.getSelectionIndices()[0];
+		final var opdaterDialog = new OpdaterDialog(shlErichsensPladesamling_1, SWT.NONE);
+		final var plade = opdaterDialog.open(connection, tableItem);
+
+		if (plade != null) {
+			tablePlader.remove(i);
+			plade.addItem(tablePlader);
+		}
+	}
+
+	/**
+	 * Delete record
+	 */
+	private static void sletPlade() {
+		final var selection = tablePlader.getSelection();
+
+		if (selection.length < 1) {
+			final var messageBox = new MessageBox(shlErichsensPladesamling_1, SWT.ICON_WARNING);
+			messageBox.setMessage("Vælg først en række!");
+			messageBox.open();
+		}
+
+		final var tableItem = selection[0];
+		final var i = tablePlader.getSelectionIndices()[0];
+		final var sletDialog = new SletDialog(shlErichsensPladesamling_1, SWT.NONE);
+		final var slettet = sletDialog.open(connection, tableItem);
+		if (slettet) {
+			tablePlader.remove(i);
+		}
+	}
+
+	/**
+	 * Insert record
+	 */
+	private static void opretPlade() {
+		final var opretDialog = new OpretDialog(shlErichsensPladesamling_1, SWT.NONE);
+		final var plade = opretDialog.open(connection);
+		if (plade != null) {
+			final var item2 = plade.addItem(tablePlader);
+			tablePlader.showItem(item2);
+		}
+	}
+
+	/**
+	 * Filter records in table
+	 */
+	private static void filtrerPlader() {
+		final var filterDialog = new FilterDialog(shlErichsensPladesamling_1, SWT.NONE);
+		final var pladeListe = filterDialog.open(connection, tablePlader);
+		tablePlader.removeAll();
+
+		if (pladeListe != null) {
+			for (final Plade plade : pladeListe) {
+				plade.addItem(tablePlader);
+			}
+		} else {
+			populateFully(shlErichsensPladesamling_1);
 		}
 	}
 
