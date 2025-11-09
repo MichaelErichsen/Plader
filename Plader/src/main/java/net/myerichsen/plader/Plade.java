@@ -58,8 +58,8 @@ public class Plade {
 	 * @return item
 	 */
 	public TableItem addItem(Table table) {
-		TableItem item = new TableItem(table, SWT.NONE);
-		String[] sa = new String[] { forlag, nummer, kunstner, titel, String.valueOf(volume), medium,
+		final var item = new TableItem(table, SWT.NONE);
+		final var sa = new String[] { forlag, nummer, kunstner, titel, String.valueOf(volume), medium,
 				String.valueOf(antal), String.valueOf(aar), oprettet };
 		item.setText(sa);
 		return item;

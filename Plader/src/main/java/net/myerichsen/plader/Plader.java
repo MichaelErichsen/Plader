@@ -45,6 +45,30 @@ public class Plader {
 	private static Shell shlErichsensPladesamling_1;
 
 	/**
+	 * Prepare font
+	 */
+	private static void createResourceManager() {
+		localResourceManager = new LocalResourceManager(JFaceResources.getResources());
+	}
+
+	/**
+	 * Filter records in table
+	 */
+	private static void filtrerPlader() {
+		final var filterDialog = new FilterDialog(shlErichsensPladesamling_1, SWT.NONE);
+		final var pladeListe = filterDialog.open(connection, tablePlader);
+		tablePlader.removeAll();
+
+		if (pladeListe != null) {
+			for (final Plade plade : pladeListe) {
+				plade.addItem(tablePlader);
+			}
+		} else {
+			populateFully(shlErichsensPladesamling_1);
+		}
+	}
+
+	/**
 	 * Launch the application.
 	 *
 	 * @param args
@@ -83,7 +107,7 @@ public class Plader {
 
 		final var lblVlgEnRkke = new Label(composite, SWT.HORIZONTAL);
 		lblVlgEnRkke.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
-		lblVlgEnRkke.setText("Vælg venligst en række, før du retter eller sletter");
+		lblVlgEnRkke.setText("Vælg venligst en række, før du retter, sletter eller søger");
 
 		final var btnRet = new Button(composite, SWT.NONE);
 		btnRet.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
@@ -175,30 +199,20 @@ public class Plader {
 	}
 
 	/**
-	 * Search Google for record
-	 * 
-	 * @throws URISyntaxException
-	 * @throws IOException
+	 * Insert record
 	 */
-	protected static void searchGoogle() throws IOException, URISyntaxException {
-		TableItem item = tablePlader.getSelection()[0];
-		String url = "https://www.google.com/search?q=" + item.getText(2) + " " + item.getText(3);
-
-		if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
-			Desktop.getDesktop().browse(new URI(url.replace(' ', '+')));
+	private static void opretPlade() {
+		final var opretDialog = new OpretDialog(shlErichsensPladesamling_1, SWT.NONE);
+		final var plade = opretDialog.open(connection);
+		if (plade != null) {
+			final var item2 = plade.addItem(tablePlader);
+			tablePlader.showItem(item2);
 		}
 	}
 
 	/**
-	 * Prepare font
-	 */
-	private static void createResourceManager() {
-		localResourceManager = new LocalResourceManager(JFaceResources.getResources());
-	}
-
-	/**
 	 * Populate table
-	 * 
+	 *
 	 * @param shlErichsensPladesamling
 	 */
 	private static void populateFully(Shell shlErichsensPladesamling) {
@@ -257,6 +271,31 @@ public class Plader {
 	}
 
 	/**
+	 * Search Google for record
+	 *
+	 * @throws URISyntaxException
+	 * @throws IOException
+	 */
+	protected static void searchGoogle() throws IOException, URISyntaxException {
+		final var selection = tablePlader.getSelection();
+
+		if (selection.length < 1) {
+			final var messageBox = new MessageBox(shlErichsensPladesamling_1, SWT.ICON_WARNING);
+			messageBox.setMessage("Vælg venligst en række!");
+			messageBox.open();
+			return;
+		}
+
+		final var item = selection[0];
+
+		final var url = "https://www.google.com/search?q=" + item.getText(2) + " " + item.getText(3);
+
+		if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
+			Desktop.getDesktop().browse(new URI(url.replace(' ', '+')));
+		}
+	}
+
+	/**
 	 * Delete record
 	 */
 	private static void sletPlade() {
@@ -274,35 +313,6 @@ public class Plader {
 		final var slettet = sletDialog.open(connection, tableItem);
 		if (slettet) {
 			tablePlader.remove(i);
-		}
-	}
-
-	/**
-	 * Insert record
-	 */
-	private static void opretPlade() {
-		final var opretDialog = new OpretDialog(shlErichsensPladesamling_1, SWT.NONE);
-		final var plade = opretDialog.open(connection);
-		if (plade != null) {
-			final var item2 = plade.addItem(tablePlader);
-			tablePlader.showItem(item2);
-		}
-	}
-
-	/**
-	 * Filter records in table
-	 */
-	private static void filtrerPlader() {
-		final var filterDialog = new FilterDialog(shlErichsensPladesamling_1, SWT.NONE);
-		final var pladeListe = filterDialog.open(connection, tablePlader);
-		tablePlader.removeAll();
-
-		if (pladeListe != null) {
-			for (final Plade plade : pladeListe) {
-				plade.addItem(tablePlader);
-			}
-		} else {
-			populateFully(shlErichsensPladesamling_1);
 		}
 	}
 

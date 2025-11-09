@@ -1,7 +1,6 @@
 package net.myerichsen.plader;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 import org.eclipse.jface.resource.FontDescriptor;
@@ -16,7 +15,6 @@ import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Dialog;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
@@ -63,31 +61,6 @@ public class SletDialog extends Dialog {
 		setText("SWT Dialog");
 	}
 
-	private void createResourceManager() {
-		localResourceManager = new LocalResourceManager(JFaceResources.getResources());
-	}
-
-	/**
-	 * Open the dialog.
-	 *
-	 * @param connection
-	 * @param tableItem
-	 *
-	 * @return the result
-	 */
-	public boolean open(Connection connection, TableItem tableItem) {
-		createContents(connection, tableItem);
-		shlSlet.open();
-		shlSlet.layout();
-		Display display = getParent().getDisplay();
-		while (!shlSlet.isDisposed()) {
-			if (!display.readAndDispatch()) {
-				display.sleep();
-			}
-		}
-		return result;
-	}
-
 	/**
 	 * Create contents of the dialog.
 	 *
@@ -100,7 +73,7 @@ public class SletDialog extends Dialog {
 		shlSlet.setText("Slet en plade");
 		shlSlet.setLayout(new GridLayout(2, false));
 
-		Label lblForlag = new Label(shlSlet, SWT.NONE);
+		final var lblForlag = new Label(shlSlet, SWT.NONE);
 		lblForlag.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
 		lblForlag.setText("Forlag");
 
@@ -109,7 +82,7 @@ public class SletDialog extends Dialog {
 		textForlag.setEditable(false);
 		textForlag.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
-		Label lblNummer = new Label(shlSlet, SWT.NONE);
+		final var lblNummer = new Label(shlSlet, SWT.NONE);
 		lblNummer.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
 		lblNummer.setText("Nummer");
 
@@ -183,32 +156,57 @@ public class SletDialog extends Dialog {
 		populateDialog(connection, tableItem);
 
 		composite = new Composite(shlSlet, SWT.NONE);
-		RowLayout rl_composite = new RowLayout(SWT.HORIZONTAL);
+		final var rl_composite = new RowLayout(SWT.HORIZONTAL);
 		rl_composite.pack = false;
 		composite.setLayout(rl_composite);
 		composite.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, true, false, 2, 1));
 
-				Button btnSlet = new Button(composite, SWT.NONE);
-				btnSlet.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
-				btnSlet.addSelectionListener(new SelectionAdapter() {
-					@Override
-					public void widgetSelected(SelectionEvent e) {
-						result = sletPlade(connection);
-					}
+		final var btnSlet = new Button(composite, SWT.NONE);
+		btnSlet.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
+		btnSlet.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				result = sletPlade(connection);
+			}
 
-				});
-				btnSlet.setText("Slet");
+		});
+		btnSlet.setText("Slet");
 
-						Button btnFortryd = new Button(composite, SWT.NONE);
-						btnFortryd.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
-						btnFortryd.addSelectionListener(new SelectionAdapter() {
-							@Override
-							public void widgetSelected(SelectionEvent e) {
-								shlSlet.close();
-							}
-						});
-						btnFortryd.setText("Fortryd");
+		final var btnFortryd = new Button(composite, SWT.NONE);
+		btnFortryd.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
+		btnFortryd.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				shlSlet.close();
+			}
+		});
+		btnFortryd.setText("Fortryd");
 
+	}
+
+	private void createResourceManager() {
+		localResourceManager = new LocalResourceManager(JFaceResources.getResources());
+	}
+
+	/**
+	 * Open the dialog.
+	 *
+	 * @param connection
+	 * @param tableItem
+	 *
+	 * @return the result
+	 */
+	public boolean open(Connection connection, TableItem tableItem) {
+		createContents(connection, tableItem);
+		shlSlet.open();
+		shlSlet.layout();
+		final var display = getParent().getDisplay();
+		while (!shlSlet.isDisposed()) {
+			if (!display.readAndDispatch()) {
+				display.sleep();
+			}
+		}
+		return result;
 	}
 
 	/**
@@ -238,15 +236,15 @@ public class SletDialog extends Dialog {
 	private boolean sletPlade(Connection connection) {
 		try {
 
-			PreparedStatement statement = connection
+			final var statement = connection
 					.prepareStatement("DELETE FROM PLADE WHERE FORLAG = ? AND NUMMER = ?");
 
 			statement.setString(1, textForlag.getText());
 			statement.setString(2, textNummer.getText());
 
-			int rc = statement.executeUpdate();
+			final var rc = statement.executeUpdate();
 
-			MessageBox messageBox = new MessageBox(shlSlet, SWT.ICON_INFORMATION);
+			final var messageBox = new MessageBox(shlSlet, SWT.ICON_INFORMATION);
 
 			if (rc > 0) {
 				messageBox.setMessage("Pladen er slettet");
@@ -257,8 +255,8 @@ public class SletDialog extends Dialog {
 
 			shlSlet.close();
 			return true;
-		} catch (SQLException e) {
-			MessageBox messageBox = new MessageBox(shlSlet, SWT.ICON_ERROR);
+		} catch (final SQLException e) {
+			final var messageBox = new MessageBox(shlSlet, SWT.ICON_ERROR);
 			messageBox.setMessage(e.getMessage());
 			messageBox.open();
 			e.printStackTrace();

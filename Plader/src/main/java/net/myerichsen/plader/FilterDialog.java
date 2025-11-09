@@ -20,7 +20,6 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Dialog;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
@@ -69,32 +68,6 @@ public class FilterDialog extends Dialog {
 		setText("SWT Dialog");
 	}
 
-	private void createResourceManager() {
-		localResourceManager = new LocalResourceManager(JFaceResources.getResources());
-	}
-
-	/**
-	 * Open the dialog.
-	 *
-	 * @param connection
-	 * @param tablePlader
-	 * @return List<Plader>
-	 */
-	public List<Plade> open(Connection connection, Table tablePlader) {
-		this.connection = connection;
-		this.tablePlader = tablePlader;
-		createContents();
-		shlFiltrerPlader.open();
-		shlFiltrerPlader.layout();
-		Display display = getParent().getDisplay();
-		while (!shlFiltrerPlader.isDisposed()) {
-			if (!display.readAndDispatch()) {
-				display.sleep();
-			}
-		}
-		return result;
-	}
-
 	/**
 	 * Create contents of the dialog.
 	 */
@@ -104,7 +77,7 @@ public class FilterDialog extends Dialog {
 		shlFiltrerPlader.setText("Filtrér plader");
 		shlFiltrerPlader.setLayout(new GridLayout(2, false));
 
-		Label lblForlag = new Label(shlFiltrerPlader, SWT.NONE);
+		final var lblForlag = new Label(shlFiltrerPlader, SWT.NONE);
 		lblForlag.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
 		lblForlag.setText("Forlag");
 
@@ -112,7 +85,7 @@ public class FilterDialog extends Dialog {
 		textForlag.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
 		textForlag.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
-		Label lblNummer = new Label(shlFiltrerPlader, SWT.NONE);
+		final var lblNummer = new Label(shlFiltrerPlader, SWT.NONE);
 		lblNummer.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
 		lblNummer.setText("Nummer");
 
@@ -141,6 +114,7 @@ public class FilterDialog extends Dialog {
 		lblVolume.setText("Volume");
 
 		spinnerVolume = new Text(shlFiltrerPlader, SWT.BORDER);
+		spinnerVolume.setEditable(false);
 		spinnerVolume.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
 		spinnerVolume.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
@@ -160,6 +134,7 @@ public class FilterDialog extends Dialog {
 		lblAntal.setText("Antal");
 
 		spinnerAntal = new Text(shlFiltrerPlader, SWT.BORDER);
+		spinnerAntal.setEditable(false);
 		spinnerAntal.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
 		spinnerAntal.setSelection(1);
 		spinnerAntal.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
@@ -169,6 +144,7 @@ public class FilterDialog extends Dialog {
 		lblAar.setText("År");
 
 		spinnerAar = new Text(shlFiltrerPlader, SWT.BORDER);
+		spinnerAar.setEditable(false);
 		spinnerAar.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
 		spinnerAar.setSelection(1968);
 		spinnerAar.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
@@ -183,7 +159,7 @@ public class FilterDialog extends Dialog {
 		textOprettet.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
 		composite = new Composite(shlFiltrerPlader, SWT.NONE);
-		RowLayout rl_composite = new RowLayout(SWT.HORIZONTAL);
+		final var rl_composite = new RowLayout(SWT.HORIZONTAL);
 		rl_composite.pack = false;
 		composite.setLayout(rl_composite);
 		composite.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 2, 1));
@@ -193,12 +169,12 @@ public class FilterDialog extends Dialog {
 		btnStarterMed.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				result = filtrerPladerStarts(connection, tablePlader);
+				result = filtrerPladerStarts();
 			}
 		});
 		btnStarterMed.setText("Starter med ....");
 
-		Button btnIndeholder = new Button(composite, SWT.NONE);
+		final var btnIndeholder = new Button(composite, SWT.NONE);
 		btnIndeholder.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
 		btnIndeholder.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -209,7 +185,7 @@ public class FilterDialog extends Dialog {
 		});
 		btnIndeholder.setText("Indeholder...");
 
-		Button btnFortryd = new Button(composite, SWT.NONE);
+		final var btnFortryd = new Button(composite, SWT.NONE);
 		btnFortryd.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
 		btnFortryd.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -221,103 +197,8 @@ public class FilterDialog extends Dialog {
 
 	}
 
-	private List<Plade> filtrerPladerStarts(Connection connection2, Table tablePlader2) {
-		List<Plade> list = new ArrayList<>();
-		String[] values = new String[6];
-		String[] fieldNames = new String[6];
-		int aar = 0;
-		int i = 0;
-		PreparedStatement statement;
-		ResultSet rs;
-
-		if (textForlag.getText().isEmpty() && textNummer.getText().isEmpty() && textKunstner.getText().isEmpty()
-				&& textTitel.getText().isEmpty() && comboMedium.getText().isEmpty() && spinnerAar.getText().isEmpty()) {
-			MessageBox messageBox = new MessageBox(shlFiltrerPlader, SWT.ICON_WARNING);
-			messageBox.setMessage("Mindst ét felt skal udfyldes!");
-			messageBox.open();
-			return list;
-		}
-
-		StringBuilder sb = new StringBuilder("SELECT * FROM PLADE WHERE LOWER (");
-
-		if (!textForlag.getText().isBlank()) {
-			fieldNames[i] = "FORLAG";
-			values[i] = textForlag.getText();
-			i++;
-		}
-		if (!textNummer.getText().isBlank()) {
-			fieldNames[i] = "NUMMER";
-			values[i] = textNummer.getText();
-			i++;
-		}
-		if (!textKunstner.getText().isBlank()) {
-			fieldNames[i] = "KUNSTNER";
-			values[i] = textKunstner.getText();
-			i++;
-		}
-		if (!textTitel.getText().isBlank()) {
-			fieldNames[i] = "TITEL";
-			values[i] = textTitel.getText();
-			i++;
-		}
-		if (!comboMedium.getText().isBlank()) {
-			fieldNames[i] = "MEDIUM";
-			values[i] = comboMedium.getText();
-			i++;
-		}
-		if (!spinnerAar.getText().isBlank()) {
-			fieldNames[i] = "AAR";
-			values[i] = spinnerAar.getText();
-			i++;
-		}
-
-		String[] fieldNames2 = new String[i];
-
-		for (int j = 0; j < i; j++) {
-			fieldNames2[j] = fieldNames[j];
-		}
-
-		sb.append(String.join(") LIKE LOWER (?) AND LOWER (", fieldNames2));
-		sb.append(") LIKE LOWER (?) ORDER BY KUNSTNER, AAR");
-
-		String query = sb.toString();
-
-		try {
-			statement = connection.prepareStatement(query);
-
-			for (int j = 0; j < i; j++) {
-				statement.setString(j + 1, values[j] + "%");
-			}
-
-			rs = statement.executeQuery();
-
-			while (rs.next()) {
-				try {
-					aar = rs.getInt("AAR");
-				} catch (Exception e) {
-
-				}
-
-				Plade plade = new Plade(rs.getString("FORLAG"), rs.getString("NUMMER"), rs.getString("KUNSTNER"),
-						rs.getString("TITEL"), rs.getInt("VOLUME"), rs.getString("MEDIUM"), rs.getInt("ANTAL"), aar,
-						rs.getString("OPRETTET"));
-
-				list.add(plade);
-			}
-
-			shlFiltrerPlader.close();
-			return list;
-		} catch (
-
-		SQLException e) {
-			MessageBox messageBox = new MessageBox(shlFiltrerPlader, SWT.ICON_ERROR);
-			messageBox.setMessage(e.getMessage());
-			messageBox.open();
-			e.printStackTrace();
-
-			return list;
-		}
-
+	private void createResourceManager() {
+		localResourceManager = new LocalResourceManager(JFaceResources.getResources());
 	}
 
 	/**
@@ -328,23 +209,23 @@ public class FilterDialog extends Dialog {
 	 * @return
 	 */
 	private List<Plade> filtrerPladeLike(Connection connection, Table tablePlader) {
-		List<Plade> list = new ArrayList<>();
-		String[] values = new String[6];
-		String[] fieldNames = new String[6];
-		int aar = 0;
-		int i = 0;
+		final List<Plade> list = new ArrayList<>();
+		final var values = new String[6];
+		final var fieldNames = new String[6];
+		var aar = 0;
+		var i = 0;
 		PreparedStatement statement;
 		ResultSet rs;
 
 		if (textForlag.getText().isEmpty() && textNummer.getText().isEmpty() && textKunstner.getText().isEmpty()
 				&& textTitel.getText().isEmpty() && comboMedium.getText().isEmpty() && spinnerAar.getText().isEmpty()) {
-			MessageBox messageBox = new MessageBox(shlFiltrerPlader, SWT.ICON_WARNING);
+			final var messageBox = new MessageBox(shlFiltrerPlader, SWT.ICON_WARNING);
 			messageBox.setMessage("Mindst ét felt skal udfyldes!");
 			messageBox.open();
 			return list;
 		}
 
-		StringBuilder sb = new StringBuilder("SELECT * FROM PLADE WHERE LOWER (");
+		final var sb = new StringBuilder("SELECT * FROM PLADE WHERE LOWER (");
 
 		if (!textForlag.getText().isBlank()) {
 			fieldNames[i] = "FORLAG";
@@ -371,27 +252,22 @@ public class FilterDialog extends Dialog {
 			values[i] = comboMedium.getText();
 			i++;
 		}
-		if (!spinnerAar.getText().isBlank()) {
-			fieldNames[i] = "AAR";
-			values[i] = spinnerAar.getText();
-			i++;
-		}
 
-		String[] fieldNames2 = new String[i];
+		final var fieldNames2 = new String[i];
 
-		for (int j = 0; j < i; j++) {
+		for (var j = 0; j < i; j++) {
 			fieldNames2[j] = fieldNames[j];
 		}
 
 		sb.append(String.join(") LIKE LOWER (?) AND LOWER (", fieldNames2));
 		sb.append(") LIKE LOWER (?) ORDER BY KUNSTNER, AAR");
 
-		String query = sb.toString();
+		final var query = sb.toString();
 
 		try {
 			statement = connection.prepareStatement(query);
 
-			for (int j = 0; j < i; j++) {
+			for (var j = 0; j < i; j++) {
 				statement.setString(j + 1, "%" + values[j] + "%");
 			}
 
@@ -400,11 +276,11 @@ public class FilterDialog extends Dialog {
 			while (rs.next()) {
 				try {
 					aar = rs.getInt("AAR");
-				} catch (Exception e) {
+				} catch (final Exception e) {
 
 				}
 
-				Plade plade = new Plade(rs.getString("FORLAG"), rs.getString("NUMMER"), rs.getString("KUNSTNER"),
+				final var plade = new Plade(rs.getString("FORLAG"), rs.getString("NUMMER"), rs.getString("KUNSTNER"),
 						rs.getString("TITEL"), rs.getInt("VOLUME"), rs.getString("MEDIUM"), rs.getInt("ANTAL"), aar,
 						rs.getString("OPRETTET"));
 
@@ -415,13 +291,129 @@ public class FilterDialog extends Dialog {
 			return list;
 		} catch (
 
-		SQLException e) {
-			MessageBox messageBox = new MessageBox(shlFiltrerPlader, SWT.ICON_ERROR);
+		final SQLException e) {
+			final var messageBox = new MessageBox(shlFiltrerPlader, SWT.ICON_ERROR);
 			messageBox.setMessage(e.getMessage());
 			messageBox.open();
 			e.printStackTrace();
 
 			return list;
 		}
+	}
+
+	private List<Plade> filtrerPladerStarts() {
+		final List<Plade> list = new ArrayList<>();
+		final var values = new String[6];
+		final var fieldNames = new String[6];
+		var aar = 0;
+		var i = 0;
+		PreparedStatement statement;
+		ResultSet rs;
+
+		if (textForlag.getText().isEmpty() && textNummer.getText().isEmpty() && textKunstner.getText().isEmpty()
+				&& textTitel.getText().isEmpty() && comboMedium.getText().isEmpty() && spinnerAar.getText().isEmpty()) {
+			final var messageBox = new MessageBox(shlFiltrerPlader, SWT.ICON_WARNING);
+			messageBox.setMessage("Mindst ét felt skal udfyldes!");
+			messageBox.open();
+			return list;
+		}
+
+		final var sb = new StringBuilder("SELECT * FROM PLADE WHERE LOWER (");
+
+		if (!textForlag.getText().isBlank()) {
+			fieldNames[i] = "FORLAG";
+			values[i] = textForlag.getText();
+			i++;
+		}
+		if (!textNummer.getText().isBlank()) {
+			fieldNames[i] = "NUMMER";
+			values[i] = textNummer.getText();
+			i++;
+		}
+		if (!textKunstner.getText().isBlank()) {
+			fieldNames[i] = "KUNSTNER";
+			values[i] = textKunstner.getText();
+			i++;
+		}
+		if (!textTitel.getText().isBlank()) {
+			fieldNames[i] = "TITEL";
+			values[i] = textTitel.getText();
+			i++;
+		}
+		if (!comboMedium.getText().isBlank()) {
+			fieldNames[i] = "MEDIUM";
+			values[i] = comboMedium.getText();
+			i++;
+		}
+
+		final var fieldNames2 = new String[i];
+
+		for (var j = 0; j < i; j++) {
+			fieldNames2[j] = fieldNames[j];
+		}
+
+		sb.append(String.join(") LIKE LOWER (?) AND LOWER (", fieldNames2));
+		sb.append(") LIKE LOWER (?) ORDER BY KUNSTNER, AAR");
+
+		final var query = sb.toString();
+
+		try {
+			statement = connection.prepareStatement(query);
+
+			for (var j = 0; j < i; j++) {
+				statement.setString(j + 1, values[j] + "%");
+			}
+
+			rs = statement.executeQuery();
+
+			while (rs.next()) {
+				try {
+					aar = rs.getInt("AAR");
+				} catch (final Exception e) {
+
+				}
+
+				final var plade = new Plade(rs.getString("FORLAG"), rs.getString("NUMMER"), rs.getString("KUNSTNER"),
+						rs.getString("TITEL"), rs.getInt("VOLUME"), rs.getString("MEDIUM"), rs.getInt("ANTAL"), aar,
+						rs.getString("OPRETTET"));
+
+				list.add(plade);
+			}
+
+			shlFiltrerPlader.close();
+			return list;
+		} catch (
+
+		final SQLException e) {
+			final var messageBox = new MessageBox(shlFiltrerPlader, SWT.ICON_ERROR);
+			messageBox.setMessage(e.getMessage());
+			messageBox.open();
+			e.printStackTrace();
+
+			return list;
+		}
+
+	}
+
+	/**
+	 * Open the dialog.
+	 *
+	 * @param connection
+	 * @param tablePlader
+	 * @return List<Plader>
+	 */
+	public List<Plade> open(Connection connection, Table tablePlader) {
+		this.connection = connection;
+		this.tablePlader = tablePlader;
+		createContents();
+		shlFiltrerPlader.open();
+		shlFiltrerPlader.layout();
+		final var display = getParent().getDisplay();
+		while (!shlFiltrerPlader.isDisposed()) {
+			if (!display.readAndDispatch()) {
+				display.sleep();
+			}
+		}
+		return result;
 	}
 }
