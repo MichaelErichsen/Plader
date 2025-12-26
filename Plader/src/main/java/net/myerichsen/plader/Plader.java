@@ -9,6 +9,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 import org.eclipse.jface.resource.FontDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
@@ -33,7 +34,7 @@ import org.eclipse.swt.widgets.TableItem;
 /**
  * Vedligehold en pladesamling
  *
- * @author Michael Erichsen
+ * @author Michael Erichsen, 2025
  */
 public class Plader {
 	private static Table tablePlader;
@@ -43,7 +44,7 @@ public class Plader {
 	private static ResultSet rs;
 	private static LocalResourceManager localResourceManager;
 	private static Shell shlErichsensPladesamling_1;
-
+	private final static String DUCKDUCKGO_SEARCH_URL = "https://duckduckgo.com/html/?q=";
 	/**
 	 * Prepare font
 	 */
@@ -55,8 +56,8 @@ public class Plader {
 	 * Filter records in table
 	 */
 	private static void filtrerPlader() {
-		final var filterDialog = new FilterDialog(shlErichsensPladesamling_1, SWT.NONE);
-		final var pladeListe = filterDialog.open(connection, tablePlader);
+		final FilterDialog filterDialog = new FilterDialog(shlErichsensPladesamling_1, SWT.NONE);
+		final List<Plade> pladeListe = filterDialog.open(connection, tablePlader);
 		tablePlader.removeAll();
 
 		if (pladeListe != null) {
@@ -129,19 +130,19 @@ public class Plader {
 		});
 		btnSlet.setText("Slet");
 
-		final var btnSearchGoogle = new Button(composite, SWT.NONE);
-		btnSearchGoogle.addSelectionListener(new SelectionAdapter() {
+		final var btnSearchDuckDuckGo = new Button(composite, SWT.NONE);
+		btnSearchDuckDuckGo.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				try {
-					searchGoogle();
+					searchDuckDuckGo();
 				} catch (IOException | URISyntaxException e1) {
 					e1.printStackTrace();
 				}
 			}
 		});
-		btnSearchGoogle.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
-		btnSearchGoogle.setText("Søg hos Google");
+		btnSearchDuckDuckGo.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
+		btnSearchDuckDuckGo.setText("Søg hos DuckDuckGo");
 
 		tablePlader = new Table(shlErichsensPladesamling_1, SWT.BORDER | SWT.FULL_SELECTION | SWT.SINGLE);
 		tablePlader.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
@@ -217,8 +218,20 @@ public class Plader {
 	 */
 	private static void populateFully(Shell shlErichsensPladesamling) {
 		try {
+//			Change POM to Postgresql if local
 			connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/postgres", "postgres", "admin");
+
+//			Change POM to MySQL if remote
+//			Properties props = new Properties();
+//			props.setProperty("user", "michaelerichsen");
+//			props.setProperty("password", "n635$SiGeONt");
+//			props.setProperty("useSSL", "true");
+//
+//			String url = "jdbc:mysql://p3nlmysql147plsk.secureserver.net:3306/ph16215164651_";
+//			connection = DriverManager.getConnection(url, props);
+
 			udenFilter = connection.prepareStatement("SELECT * FROM PLADE ORDER BY KUNSTNER, AAR");
+
 			rs = udenFilter.executeQuery();
 
 			while (rs.next()) {
@@ -239,7 +252,7 @@ public class Plader {
 			}
 
 		} catch (final SQLException e) {
-			final var messageBox = new MessageBox(shlErichsensPladesamling, SWT.ICON_ERROR);
+			final MessageBox messageBox = new MessageBox(shlErichsensPladesamling, SWT.ICON_ERROR);
 			messageBox.setMessage(e.getMessage());
 			messageBox.open();
 			e.printStackTrace();
@@ -250,10 +263,10 @@ public class Plader {
 	 * Update record
 	 */
 	private static void retPlade() {
-		final var selection = tablePlader.getSelection();
+		final TableItem[] selection = tablePlader.getSelection();
 
 		if (selection.length < 1) {
-			final var messageBox = new MessageBox(shlErichsensPladesamling_1, SWT.ICON_WARNING);
+			final MessageBox messageBox = new MessageBox(shlErichsensPladesamling_1, SWT.ICON_WARNING);
 			messageBox.setMessage("Vælg venligst en række!");
 			messageBox.open();
 			return;
@@ -271,12 +284,12 @@ public class Plader {
 	}
 
 	/**
-	 * Search Google for record
+	 * Search DuckDuckGo for record
 	 *
 	 * @throws URISyntaxException
 	 * @throws IOException
 	 */
-	protected static void searchGoogle() throws IOException, URISyntaxException {
+	protected static void searchDuckDuckGo() throws IOException, URISyntaxException {
 		final var selection = tablePlader.getSelection();
 
 		if (selection.length < 1) {
@@ -288,7 +301,7 @@ public class Plader {
 
 		final var item = selection[0];
 
-		final var url = "https://www.google.com/search?q=" + item.getText(2) + " " + item.getText(3);
+		final var url = DUCKDUCKGO_SEARCH_URL + item.getText(2) + " " + item.getText(3);
 
 		if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
 			Desktop.getDesktop().browse(new URI(url.replace(' ', '+')));
@@ -303,7 +316,7 @@ public class Plader {
 
 		if (selection.length < 1) {
 			final var messageBox = new MessageBox(shlErichsensPladesamling_1, SWT.ICON_WARNING);
-			messageBox.setMessage("Vælg først en række!");
+			messageBox.setMessage("Vælg først en plade!");
 			messageBox.open();
 		}
 
