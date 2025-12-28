@@ -193,8 +193,26 @@ public class Plade {
 
 	@Override
 	public String toString() {
-		return "Plade [forlag=" + forlag + ", nummer=" + nummer + ", kunstner=" + kunstner + ", titel=" + titel
-				+ ", volume=" + volume + ", medium=" + medium + ", antal=" + antal + ", aar=" + aar + ", oprettet="
-				+ oprettet + "]";
+		StringBuilder builder = new StringBuilder();
+		builder.append("Plade [antal=");
+		builder.append(antal);
+		builder.append(", forlag=");
+		builder.append(forlag);
+		builder.append(", kunstner=");
+		builder.append(kunstner);
+		builder.append(", medium=");
+		builder.append(medium);
+		builder.append(", nummer=");
+		builder.append(nummer);
+		builder.append(", oprettet=");
+		builder.append(oprettet);
+		builder.append(", titel=");
+		builder.append(titel);
+		builder.append(", volume=");
+		builder.append(volume);
+		builder.append(", aar=");
+		builder.append(aar);
+		builder.append("]");
+		return builder.toString();
 	}
 }

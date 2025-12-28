@@ -277,8 +277,8 @@ public class OpdaterDialog extends Dialog {
 		spinnerAntal.setMinimum(1);
 		spinnerAntal.setSelection(1);
 		try {
-			spinnerAar.setSelection(Integer.valueOf(tableItem.getText(7)));
-		} catch (NumberFormatException e) {
+			spinnerAar.setSelection(Integer.parseInt(tableItem.getText(7)));
+		} catch (final NumberFormatException e) {
 		}
 		textOprettet.setText(tableItem.getText(8));
 	}

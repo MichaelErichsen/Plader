@@ -21,11 +21,10 @@ public class RetOprettetDato {
 	 */
 	public static void main(String[] args) {
 		try {
-			final var connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/postgres",
-					"postgres", "admin");
+			final var connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/postgres", "postgres",
+					"admin");
 			final var psL = connection.prepareStatement("SELECT DISTINCT OPRETTET FROM PLADE");
-			final var psU = connection
-					.prepareStatement("UPDATE PLADE SET OPRETTET = ? WHERE OPRETTET = ?");
+			final var psU = connection.prepareStatement("UPDATE PLADE SET OPRETTET = ? WHERE OPRETTET = ?");
 			final List<String> liste = new ArrayList<>();
 			var rettet = "";
 			final var pattern = Pattern.compile("(\\d{2})-(\\d{2})-(\\d{4})\\s\\d{2}:\\d{2}");

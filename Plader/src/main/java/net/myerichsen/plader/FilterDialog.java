@@ -29,7 +29,7 @@ import org.eclipse.swt.widgets.Text;
 /**
  * Filtrering af items
  *
- * @author Michael Erichsen
+ * @author Michael Erichsen, 2015
  */
 public class FilterDialog extends Dialog {
 	protected List<Plade> result;
@@ -59,8 +59,8 @@ public class FilterDialog extends Dialog {
 	/**
 	 * Create the dialog.
 	 *
-	 * @param parent
-	 * @param style
+	 * @param parent Parent shell
+	 * @param style  Style of shell
 	 */
 	public FilterDialog(Shell parent, int style) {
 		super(parent, style);

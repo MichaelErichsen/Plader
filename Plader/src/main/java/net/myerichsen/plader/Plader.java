@@ -9,7 +9,6 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.List;
 
 import org.eclipse.jface.resource.FontDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
@@ -45,6 +44,7 @@ public class Plader {
 	private static LocalResourceManager localResourceManager;
 	private static Shell shlErichsensPladesamling_1;
 	private final static String DUCKDUCKGO_SEARCH_URL = "https://duckduckgo.com/html/?q=";
+
 	/**
 	 * Prepare font
 	 */
@@ -56,8 +56,8 @@ public class Plader {
 	 * Filter records in table
 	 */
 	private static void filtrerPlader() {
-		final FilterDialog filterDialog = new FilterDialog(shlErichsensPladesamling_1, SWT.NONE);
-		final List<Plade> pladeListe = filterDialog.open(connection, tablePlader);
+		final var filterDialog = new FilterDialog(shlErichsensPladesamling_1, SWT.NONE);
+		final var pladeListe = filterDialog.open(connection, tablePlader);
 		tablePlader.removeAll();
 
 		if (pladeListe != null) {
@@ -252,7 +252,7 @@ public class Plader {
 			}
 
 		} catch (final SQLException e) {
-			final MessageBox messageBox = new MessageBox(shlErichsensPladesamling, SWT.ICON_ERROR);
+			final var messageBox = new MessageBox(shlErichsensPladesamling, SWT.ICON_ERROR);
 			messageBox.setMessage(e.getMessage());
 			messageBox.open();
 			e.printStackTrace();
@@ -263,10 +263,10 @@ public class Plader {
 	 * Update record
 	 */
 	private static void retPlade() {
-		final TableItem[] selection = tablePlader.getSelection();
+		final var selection = tablePlader.getSelection();
 
 		if (selection.length < 1) {
-			final MessageBox messageBox = new MessageBox(shlErichsensPladesamling_1, SWT.ICON_WARNING);
+			final var messageBox = new MessageBox(shlErichsensPladesamling_1, SWT.ICON_WARNING);
 			messageBox.setMessage("Vælg venligst en række!");
 			messageBox.open();
 			return;

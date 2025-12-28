@@ -236,8 +236,7 @@ public class SletDialog extends Dialog {
 	private boolean sletPlade(Connection connection) {
 		try {
 
-			final var statement = connection
-					.prepareStatement("DELETE FROM PLADE WHERE FORLAG = ? AND NUMMER = ?");
+			final var statement = connection.prepareStatement("DELETE FROM PLADE WHERE FORLAG = ? AND NUMMER = ?");
 
 			statement.setString(1, textForlag.getText());
 			statement.setString(2, textNummer.getText());
