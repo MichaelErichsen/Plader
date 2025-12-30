@@ -1,6 +1,9 @@
 package net.myerichsen.plader;
 
-import static net.myerichsen.plader.Konstanter.*;
+import static net.myerichsen.plader.Konstanter.DUCKDUCKGO_SEARCH_URL;
+import static net.myerichsen.plader.Konstanter.GODADDY_URL;
+import static net.myerichsen.plader.Konstanter.PASSWORD;
+import static net.myerichsen.plader.Konstanter.USERID;
 
 import java.awt.Desktop;
 import java.io.IOException;
@@ -34,7 +37,7 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
 /**
- * Vedligehold en pladesamling
+ * Forespørg på en pladesamling
  *
  * @author Michael Erichsen, 2025
  */
@@ -98,39 +101,9 @@ public class Plader {
 		});
 		btnFiltrer.setText("Filtrér");
 
-		final var btnOpret = new Button(composite, SWT.NONE);
-		btnOpret.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
-		btnOpret.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				opretPlade();
-			}
-		});
-		btnOpret.setText("Opret");
-
 		final var lblVlgEnRkke = new Label(composite, SWT.HORIZONTAL);
 		lblVlgEnRkke.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
-		lblVlgEnRkke.setText("Vælg venligst en række, før du retter, sletter eller søger");
-
-		final var btnRet = new Button(composite, SWT.NONE);
-		btnRet.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
-		btnRet.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				retPlade();
-			}
-		});
-		btnRet.setText("Ret");
-
-		final var btnSlet = new Button(composite, SWT.NONE);
-		btnSlet.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
-		btnSlet.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				sletPlade();
-			}
-		});
-		btnSlet.setText("Slet");
+		lblVlgEnRkke.setText("Vælg venligst en række, før du søger");
 
 		final var btnSearchDuckDuckGo = new Button(composite, SWT.NONE);
 		btnSearchDuckDuckGo.addSelectionListener(new SelectionAdapter() {
@@ -202,18 +175,6 @@ public class Plader {
 	}
 
 	/**
-	 * Insert record
-	 */
-	private static void opretPlade() {
-		final var opretDialog = new OpretDialog(shlErichsensPladesamling_1, SWT.NONE);
-		final var plade = opretDialog.open(connection);
-		if (plade != null) {
-			final var item2 = plade.addItem(tablePlader);
-			tablePlader.showItem(item2);
-		}
-	}
-
-	/**
 	 * Populate table
 	 *
 	 * @param shlErichsensPladesamling
@@ -261,30 +222,6 @@ public class Plader {
 	}
 
 	/**
-	 * Update record
-	 */
-	private static void retPlade() {
-		final var selection = tablePlader.getSelection();
-
-		if (selection.length < 1) {
-			final var messageBox = new MessageBox(shlErichsensPladesamling_1, SWT.ICON_WARNING);
-			messageBox.setMessage("Vælg venligst en række!");
-			messageBox.open();
-			return;
-		}
-
-		final var tableItem = selection[0];
-		final var i = tablePlader.getSelectionIndices()[0];
-		final var opdaterDialog = new OpdaterDialog(shlErichsensPladesamling_1, SWT.NONE);
-		final var plade = opdaterDialog.open(connection, tableItem);
-
-		if (plade != null) {
-			tablePlader.remove(i);
-			plade.addItem(tablePlader);
-		}
-	}
-
-	/**
 	 * Search DuckDuckGo for record
 	 *
 	 * @throws URISyntaxException
@@ -306,27 +243,6 @@ public class Plader {
 
 		if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
 			Desktop.getDesktop().browse(new URI(url.replace(' ', '+')));
-		}
-	}
-
-	/**
-	 * Delete record
-	 */
-	private static void sletPlade() {
-		final var selection = tablePlader.getSelection();
-
-		if (selection.length < 1) {
-			final var messageBox = new MessageBox(shlErichsensPladesamling_1, SWT.ICON_WARNING);
-			messageBox.setMessage("Vælg først en plade!");
-			messageBox.open();
-		}
-
-		final var tableItem = selection[0];
-		final var i = tablePlader.getSelectionIndices()[0];
-		final var sletDialog = new SletDialog(shlErichsensPladesamling_1, SWT.NONE);
-		final var slettet = sletDialog.open(connection, tableItem);
-		if (slettet) {
-			tablePlader.remove(i);
 		}
 	}
 
