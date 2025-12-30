@@ -9,6 +9,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Properties;
 
 import org.eclipse.jface.resource.FontDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
@@ -43,7 +44,9 @@ public class Plader {
 	private static ResultSet rs;
 	private static LocalResourceManager localResourceManager;
 	private static Shell shlErichsensPladesamling_1;
-	private final static String DUCKDUCKGO_SEARCH_URL = "https://duckduckgo.com/html/?q=";
+	private static final String DUCKDUCKGO_SEARCH_URL = "https://duckduckgo.com/html/?q=";
+	private static final String GODADDY_URL = "jdbc:mysql://?/?";
+//	private static final String LOCAL_POSTGRESQL_URL = "jdbc:postgresql://localhost:5432/postgres";
 
 	/**
 	 * Prepare font
@@ -65,7 +68,7 @@ public class Plader {
 				plade.addItem(tablePlader);
 			}
 		} else {
-			populateFully(shlErichsensPladesamling_1);
+			connectAndPopulateFully(shlErichsensPladesamling_1);
 		}
 	}
 
@@ -189,7 +192,7 @@ public class Plader {
 		tblclmnOprettet.setText("Oprettet");
 		new Label(shlErichsensPladesamling_1, SWT.NONE);
 
-		populateFully(shlErichsensPladesamling_1);
+		connectAndPopulateFully(shlErichsensPladesamling_1);
 
 		shlErichsensPladesamling_1.open();
 		while (!shlErichsensPladesamling_1.isDisposed()) {
@@ -216,19 +219,18 @@ public class Plader {
 	 *
 	 * @param shlErichsensPladesamling
 	 */
-	private static void populateFully(Shell shlErichsensPladesamling) {
+	private static void connectAndPopulateFully(Shell shlErichsensPladesamling) {
 		try {
 //			Change POM to Postgresql if local
-			connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/postgres", "postgres", "admin");
+//			connection = DriverManager.getConnection(LOCAL_POSTGRESQL_URL, "postgres", "admin");
 
 //			Change POM to MySQL if remote
-//			Properties props = new Properties();
-//			props.setProperty("user", "michaelerichsen");
-//			props.setProperty("password", "n635$SiGeONt");
-//			props.setProperty("useSSL", "true");
-//
-//			String url = "jdbc:mysql://p3nlmysql147plsk.secureserver.net:3306/ph16215164651_";
-//			connection = DriverManager.getConnection(url, props);
+			Properties props = new Properties();
+			props.setProperty("user", "?");
+			props.setProperty("password", "?");
+			props.setProperty("useSSL", "true");
+
+			connection = DriverManager.getConnection(GODADDY_URL, props);
 
 			udenFilter = connection.prepareStatement("SELECT * FROM PLADE ORDER BY KUNSTNER, AAR");
 
