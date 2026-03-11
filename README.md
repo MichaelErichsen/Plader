@@ -1,9 +1,9 @@
-# Record collection
+ Record collection application
 
 This is an application maintaining a record collection.
 All text is in Danish
 
-## First iteration is a Java SWT program
+## This is a Java SWT program
 
 Data resides in a PostgreSQL database
 
@@ -17,7 +17,6 @@ CREATE TABLE public.plade (
 	antal int4 DEFAULT 1 NULL,
 	aar int4 NULL,
 	oprettet varchar(255) NULL,
+	klassisk varchar(3) NOT NULL,
 	CONSTRAINT plade_unique UNIQUE (nummer, forlag)
 );
-
-## A planned further iteration will be an Android app
