@@ -1,10 +1,14 @@
 package net.myerichsen.plader;
 
+import static net.myerichsen.plader.Konstanter.GODADDY_URL;
+import static net.myerichsen.plader.Konstanter.PASSWORD;
+import static net.myerichsen.plader.Konstanter.USERID;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.Properties;
@@ -50,7 +54,6 @@ public class OpretDialog extends Dialog {
 	private Spinner spinnerVolume;
 	private Text textTitel;
 	private Text textKunstner;
-	private Connection connection;
 	private Label lblKunstner;
 	private Label lblTitel;
 	private Label lblVolume;
@@ -200,6 +203,9 @@ public class OpretDialog extends Dialog {
 		comboKlassisk = new Combo(shlOpretEnNy, SWT.NONE);
 		comboKlassisk.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
 		comboKlassisk.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		comboKlassisk.add("NEJ");
+		comboKlassisk.add("JA");
+		comboKlassisk.select(0);
 
 		lblOprettet = new Label(shlOpretEnNy, SWT.NONE);
 		lblOprettet.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
@@ -259,8 +265,7 @@ public class OpretDialog extends Dialog {
 	 *
 	 * @return the result
 	 */
-	public Plade open(Connection connection) {
-		connection = this.connection = connection;
+	public Plade open() {
 		createContents();
 		shlOpretEnNy.open();
 		shlOpretEnNy.layout();
@@ -288,6 +293,13 @@ public class OpretDialog extends Dialog {
 				return;
 			}
 
+			final var props = new Properties();
+			props.setProperty("user", USERID);
+			props.setProperty("password", PASSWORD);
+			props.setProperty("useSSL", "true");
+
+			final var connection = DriverManager.getConnection(GODADDY_URL, props);
+
 			final var insert = "INSERT INTO PLADE (FORLAG, NUMMER, KUNSTNER, TITEL, VOLUME, MEDIUM, ANTAL, AAR, OPRETTET, KLASSISK) "
 					+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
@@ -305,6 +317,8 @@ public class OpretDialog extends Dialog {
 			statement.setString(10, comboKlassisk.getText());
 
 			final var rc = statement.executeUpdate();
+
+			connection.close();
 
 			final var messageBox = new MessageBox(shlOpretEnNy, SWT.ICON_INFORMATION);
 			if (rc > 0) {

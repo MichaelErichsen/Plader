@@ -7,7 +7,10 @@ import org.eclipse.swt.widgets.TableItem;
 /**
  * Data carrier
  *
- * @author Michael Erichsen
+ * @author Michael Erichsen 2025-2026
+ */
+/**
+ *
  */
 public class Plade {
 	private int antal;
@@ -28,6 +31,8 @@ public class Plade {
 
 	private int aar;
 
+	private String klassisk;
+
 	/**
 	 * @param forlag
 	 * @param nummer
@@ -38,9 +43,10 @@ public class Plade {
 	 * @param antal
 	 * @param aar
 	 * @param oprettet
+	 * @param klassisk
 	 */
 	public Plade(String forlag, String nummer, String kunstner, String titel, int volume, String medium, int antal,
-			int aar, String oprettet) {
+			int aar, String oprettet, String klassisk) {
 		super();
 		this.forlag = forlag;
 		this.nummer = nummer;
@@ -51,6 +57,7 @@ public class Plade {
 		this.antal = antal;
 		this.aar = aar;
 		this.oprettet = oprettet;
+		this.klassisk = klassisk;
 	}
 
 	/**
@@ -60,7 +67,7 @@ public class Plade {
 	public TableItem addItem(Table table) {
 		final var item = new TableItem(table, SWT.NONE);
 		final var sa = new String[] { forlag, nummer, kunstner, titel, String.valueOf(volume), medium,
-				String.valueOf(antal), String.valueOf(aar), oprettet };
+				String.valueOf(antal), String.valueOf(aar), oprettet, klassisk };
 		item.setText(sa);
 		return item;
 	}
@@ -77,6 +84,13 @@ public class Plade {
 	 */
 	public String getForlag() {
 		return forlag;
+	}
+
+	/**
+	 * @return the klassisk
+	 */
+	public String getKlassisk() {
+		return klassisk;
 	}
 
 	/**
@@ -143,6 +157,13 @@ public class Plade {
 	}
 
 	/**
+	 * @param klassisk the klassisk to set
+	 */
+	public void setKlassisk(String klassisk) {
+		this.klassisk = klassisk;
+	}
+
+	/**
 	 * @param kunstner
 	 */
 	public void setKunstner(String kunstner) {
@@ -193,7 +214,7 @@ public class Plade {
 
 	@Override
 	public String toString() {
-		StringBuilder builder = new StringBuilder();
+		final var builder = new StringBuilder();
 		builder.append("Plade [antal=");
 		builder.append(antal);
 		builder.append(", forlag=");
@@ -212,6 +233,8 @@ public class Plade {
 		builder.append(volume);
 		builder.append(", aar=");
 		builder.append(aar);
+		builder.append(", klassisk=");
+		builder.append(klassisk);
 		builder.append("]");
 		return builder.toString();
 	}

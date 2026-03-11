@@ -4,7 +4,6 @@ import static net.myerichsen.plader.Konstanter.GODADDY_URL;
 import static net.myerichsen.plader.Konstanter.PASSWORD;
 import static net.myerichsen.plader.Konstanter.USERID;
 
-import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
@@ -22,34 +21,32 @@ public class RetTilKlassisk {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		String[] strenge = { "Albinoni", "Beethoven", "Bizet", "Borodin", "Brahms", "Debussy", "Delibes", "Donizetti",
-				"Dvorak", "Elgar", "Faur", "Gade", "Gershwin", "Grieg", "Holst", "I Musici", "Janácek", "Khat",
-				"Kunzen", "Langg", "Mahler", "Mendelsohn", "Mozart", "Nielsen", "Orff", "Porgy", "Proko", "Puccini",
-				"Ravel", "Rimsk", "Satie", "Shosta", "Sibelius", "Smetana", "Strauss", "Tjai", "Verdi", "Vivaldi"
+		final String[] strenge = { "Albéniz", "Albinoni", "Beethoven", "Bizet", "Borodin", "Brahms", "Debussy", "Delibes",
+				"Donizetti", "Dvorak", "Elgar", "Faur", "Gade", "Gershwin", "Grieg", "Holst", "I Musici", "Janácek",
+				"Khat", "Kunzen", "Langg", "Mahler", "Mendelsohn", "Mozart", "Nielsen", "Orff", "Porgy", "Proko",
+				"Puccini", "Ravel", "Rimsk", "Satie", "Shosta", "Sibelius", "Smetana", "Strauss", "Tjai", "Verdi",
+				"Vivaldi" };
 
-		};
-
-		Properties props = new Properties();
+		final var props = new Properties();
 		props.setProperty("user", USERID);
 		props.setProperty("password", PASSWORD);
 		props.setProperty("useSSL", "true");
 
 		try {
-			Connection connection = DriverManager.getConnection(GODADDY_URL, props);
+			final var connection = DriverManager.getConnection(GODADDY_URL, props);
 			final var psU = connection.prepareStatement("UPDATE PLADE SET KLASSISK = 'JA' WHERE KUNSTNER LIKE ?");
 
-			for (int i = 0; i < strenge.length; i++) {
+			for (final String element : strenge) {
 
-				psU.setString(1, strenge[i] + "%");
+				psU.setString(1, element + "%");
 
 				final var updateCount = psU.executeUpdate();
-				
 
 				if (updateCount > 0) {
-					System.out.println(strenge[i] + " rettet til JA");
+					System.out.println(element + " rettet til JA");
 				}
 			}
-		} catch (SQLException e) {
+		} catch (final SQLException e) {
 			e.printStackTrace();
 		}
 	}

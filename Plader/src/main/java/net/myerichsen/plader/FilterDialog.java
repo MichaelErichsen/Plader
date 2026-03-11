@@ -1,11 +1,16 @@
 package net.myerichsen.plader;
 
-import java.sql.Connection;
+import static net.myerichsen.plader.Konstanter.GODADDY_URL;
+import static net.myerichsen.plader.Konstanter.PASSWORD;
+import static net.myerichsen.plader.Konstanter.USERID;
+
+import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 import org.eclipse.jface.resource.FontDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
@@ -43,7 +48,6 @@ public class FilterDialog extends Dialog {
 	private Text spinnerVolume;
 	private Text textTitel;
 	private Text textKunstner;
-	private Connection connection;
 	private Label lblKunstner;
 	private Label lblTitel;
 	private Label lblVolume;
@@ -172,11 +176,11 @@ public class FilterDialog extends Dialog {
 		comboKlassisk.add("");
 		comboKlassisk.add("JA");
 		comboKlassisk.add("NEJ");
-		
+
 		composite_1 = new Composite(shlFiltrerPlader, SWT.NONE);
 		composite_1.setLayout(new RowLayout(SWT.HORIZONTAL));
 		composite_1.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 2, 1));
-		
+
 		lblNewLabel = new Label(composite_1, SWT.NONE);
 		lblNewLabel.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
 		lblNewLabel.setText("Klik \"Fortryd\" for at vise alle");
@@ -202,7 +206,7 @@ public class FilterDialog extends Dialog {
 		btnIndeholder.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				result = filtrerPladeLike(connection, tablePlader);
+				result = filtrerPladeLike(tablePlader);
 			}
 
 		});
@@ -231,7 +235,7 @@ public class FilterDialog extends Dialog {
 	 * @param tablePlader
 	 * @return
 	 */
-	private List<Plade> filtrerPladeLike(Connection connection, Table tablePlader) {
+	private List<Plade> filtrerPladeLike(Table tablePlader) {
 		final List<Plade> list = new ArrayList<>();
 		final var values = new String[6];
 		final var fieldNames = new String[6];
@@ -294,6 +298,12 @@ public class FilterDialog extends Dialog {
 		final var query = sb.toString();
 
 		try {
+			final var props = new Properties();
+			props.setProperty("user", USERID);
+			props.setProperty("password", PASSWORD);
+			props.setProperty("useSSL", "true");
+
+			final var connection = DriverManager.getConnection(GODADDY_URL, props);
 			statement = connection.prepareStatement(query);
 
 			for (var j = 0; j < i; j++) {
@@ -316,6 +326,7 @@ public class FilterDialog extends Dialog {
 				list.add(plade);
 			}
 
+			connection.close();
 			shlFiltrerPlader.close();
 			return list;
 		} catch (
@@ -393,6 +404,12 @@ public class FilterDialog extends Dialog {
 		final var query = sb.toString();
 
 		try {
+			final var props = new Properties();
+			props.setProperty("user", USERID);
+			props.setProperty("password", PASSWORD);
+			props.setProperty("useSSL", "true");
+
+			final var connection = DriverManager.getConnection(GODADDY_URL, props);
 			statement = connection.prepareStatement(query);
 
 			for (var j = 0; j < i; j++) {
@@ -415,6 +432,7 @@ public class FilterDialog extends Dialog {
 				list.add(plade);
 			}
 
+			connection.close();
 			shlFiltrerPlader.close();
 			return list;
 		} catch (
@@ -437,8 +455,7 @@ public class FilterDialog extends Dialog {
 	 * @param tablePlader
 	 * @return List<Plader>
 	 */
-	public List<Plade> open(Connection connection, Table tablePlader) {
-		this.connection = connection;
+	public List<Plade> open(Table tablePlader) {
 		this.tablePlader = tablePlader;
 		createContents();
 		shlFiltrerPlader.open();

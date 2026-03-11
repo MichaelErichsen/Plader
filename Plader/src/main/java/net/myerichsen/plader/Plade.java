@@ -214,7 +214,7 @@ public class Plade {
 
 	@Override
 	public String toString() {
-		StringBuilder builder = new StringBuilder();
+		final var builder = new StringBuilder();
 		builder.append("Plade [antal=");
 		builder.append(antal);
 		builder.append(", forlag=");

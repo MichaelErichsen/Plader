@@ -1,7 +1,12 @@
 package net.myerichsen.plader;
 
-import java.sql.Connection;
+import static net.myerichsen.plader.Konstanter.GODADDY_URL;
+import static net.myerichsen.plader.Konstanter.PASSWORD;
+import static net.myerichsen.plader.Konstanter.USERID;
+
+import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Properties;
 
 import org.eclipse.jface.resource.FontDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
@@ -67,9 +72,8 @@ public class SletDialog extends Dialog {
 	 * Create contents of the dialog.
 	 *
 	 * @param tableItem
-	 * @param connection
 	 */
-	private void createContents(Connection connection, TableItem tableItem) {
+	private void createContents(TableItem tableItem) {
 		shlSlet = new Shell(getParent(), SWT.SHELL_TRIM | SWT.TITLE);
 		shlSlet.setSize(600, 500);
 		shlSlet.setText("Slet en plade");
@@ -165,7 +169,7 @@ public class SletDialog extends Dialog {
 		textKlassisk.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
 		textKlassisk.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
-		populateDialog(connection, tableItem);
+		populateDialog(tableItem);
 
 		composite = new Composite(shlSlet, SWT.NONE);
 		final var rl_composite = new RowLayout(SWT.HORIZONTAL);
@@ -178,7 +182,7 @@ public class SletDialog extends Dialog {
 		btnSlet.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				result = sletPlade(connection);
+				result = sletPlade();
 			}
 
 		});
@@ -208,8 +212,8 @@ public class SletDialog extends Dialog {
 	 *
 	 * @return the result
 	 */
-	public boolean open(Connection connection, TableItem tableItem) {
-		createContents(connection, tableItem);
+	public boolean open(TableItem tableItem) {
+		createContents(tableItem);
 		shlSlet.open();
 		shlSlet.layout();
 		final var display = getParent().getDisplay();
@@ -227,7 +231,7 @@ public class SletDialog extends Dialog {
 	 * @param connection
 	 * @param tableItem
 	 */
-	private void populateDialog(Connection connection, TableItem tableItem) {
+	private void populateDialog(TableItem tableItem) {
 		textForlag.setText(tableItem.getText(0));
 		textNummer.setText(tableItem.getText(1));
 		textKunstner.setText(tableItem.getText(2));
@@ -246,8 +250,14 @@ public class SletDialog extends Dialog {
 	 * @param connection
 	 * @return
 	 */
-	private boolean sletPlade(Connection connection) {
+	private boolean sletPlade() {
 		try {
+			final var props = new Properties();
+			props.setProperty("user", USERID);
+			props.setProperty("password", PASSWORD);
+			props.setProperty("useSSL", "true");
+
+			final var connection = DriverManager.getConnection(GODADDY_URL, props);
 
 			final var statement = connection.prepareStatement("DELETE FROM PLADE WHERE FORLAG = ? AND NUMMER = ?");
 
@@ -265,6 +275,7 @@ public class SletDialog extends Dialog {
 			}
 			messageBox.open();
 
+			connection.close();
 			shlSlet.close();
 			return true;
 		} catch (final SQLException e) {

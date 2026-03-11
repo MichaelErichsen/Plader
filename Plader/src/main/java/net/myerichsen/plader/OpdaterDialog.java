@@ -1,7 +1,12 @@
 package net.myerichsen.plader;
 
-import java.sql.Connection;
+import static net.myerichsen.plader.Konstanter.GODADDY_URL;
+import static net.myerichsen.plader.Konstanter.PASSWORD;
+import static net.myerichsen.plader.Konstanter.USERID;
+
+import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Properties;
 
 import org.eclipse.jface.resource.FontDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
@@ -70,7 +75,7 @@ public class OpdaterDialog extends Dialog {
 	 * @param tableItem
 	 * @param connection
 	 */
-	private void createContents(Connection connection, TableItem tableItem) {
+	private void createContents(TableItem tableItem) {
 		shlOpdater = new Shell(getParent(), SWT.SHELL_TRIM | SWT.TITLE);
 		shlOpdater.setSize(500, 500);
 		shlOpdater.setText("Opdatér en plade");
@@ -169,7 +174,7 @@ public class OpdaterDialog extends Dialog {
 		comboKlassisk.add("NEJ");
 		comboKlassisk.add("JA");
 
-		populateDialog(connection, tableItem);
+		populateDialog(tableItem);
 
 		composite = new Composite(shlOpdater, SWT.NONE);
 		composite.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 2, 1));
@@ -182,7 +187,7 @@ public class OpdaterDialog extends Dialog {
 		btnOpdater.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				opdaterPlade(connection);
+				opdaterPlade();
 				shlOpdater.close();
 			}
 
@@ -210,8 +215,14 @@ public class OpdaterDialog extends Dialog {
 	 *
 	 * @param connection
 	 */
-	private void opdaterPlade(Connection connection) {
+	private void opdaterPlade() {
 		try {
+			final var props = new Properties();
+			props.setProperty("user", USERID);
+			props.setProperty("password", PASSWORD);
+			props.setProperty("useSSL", "true");
+
+			final var connection = DriverManager.getConnection(GODADDY_URL, props);
 
 			final var statement = connection.prepareStatement(
 					"UPDATE PLADE SET KUNSTNER = ?, TITEL = ?, VOLUME = ?, MEDIUM = ?, ANTAL = ?, AAR = ?, KLASSISK = ? "
@@ -223,11 +234,14 @@ public class OpdaterDialog extends Dialog {
 			statement.setString(4, comboMedium.getText());
 			statement.setInt(5, Integer.parseInt(spinnerAntal.getText()));
 			statement.setInt(6, Integer.parseInt(spinnerAar.getText()));
-			statement.setString(7, textForlag.getText());
-			statement.setString(8, textNummer.getText());
-			statement.setString(9, comboKlassisk.getText());
+			statement.setString(7, comboKlassisk.getText());
+			statement.setString(8, textForlag.getText());
+			statement.setString(9, textNummer.getText());
+
 
 			final var rc = statement.executeUpdate();
+
+			connection.close();
 
 			final var messageBox = new MessageBox(shlOpdater, SWT.ICON_INFORMATION);
 
@@ -257,13 +271,12 @@ public class OpdaterDialog extends Dialog {
 	/**
 	 * Open the dialog.
 	 *
-	 * @param connection
 	 * @param tableItem
 	 *
 	 * @return the result
 	 */
-	public Plade open(Connection connection, TableItem tableItem) {
-		createContents(connection, tableItem);
+	public Plade open(TableItem tableItem) {
+		createContents(tableItem);
 		shlOpdater.open();
 		shlOpdater.layout();
 		final var display = getParent().getDisplay();
@@ -281,7 +294,7 @@ public class OpdaterDialog extends Dialog {
 	 * @param connection
 	 * @param tableItem
 	 */
-	private void populateDialog(Connection connection, TableItem tableItem) {
+	private void populateDialog(TableItem tableItem) {
 		textForlag.setText(tableItem.getText(0));
 		textNummer.setText(tableItem.getText(1));
 		textKunstner.setText(tableItem.getText(2));
@@ -289,10 +302,12 @@ public class OpdaterDialog extends Dialog {
 		comboMedium.setText(tableItem.getText(5));
 		spinnerAntal.setMinimum(1);
 		spinnerAntal.setSelection(1);
+
 		try {
 			spinnerAar.setSelection(Integer.parseInt(tableItem.getText(7)));
 		} catch (final NumberFormatException e) {
 		}
+
 		textOprettet.setText(tableItem.getText(8));
 		comboKlassisk.setText(tableItem.getText(9));
 	}

@@ -9,7 +9,6 @@ import java.awt.Desktop;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -44,11 +43,59 @@ import org.eclipse.swt.widgets.TableItem;
 public class Plader {
 	private static Table tablePlader;
 	private static TableItem item;
-	private static Connection connection;
 	private static PreparedStatement udenFilter;
 	private static ResultSet rs;
 	private static LocalResourceManager localResourceManager;
 	private static Shell shlErichsensPladesamling_1;
+
+	/**
+	 * Populate table
+	 *
+	 * @param shlErichsensPladesamling
+	 */
+	private static void connectAndPopulateFully(Shell shlErichsensPladesamling) {
+		try {
+//			Change POM to Postgresql if local
+//			connection = DriverManager.getConnection(LOCAL_POSTGRESQL_URL, "postgres", "admin");
+
+//			Change POM to MySQL if remote
+			final var props = new Properties();
+			props.setProperty("user", USERID);
+			props.setProperty("password", PASSWORD);
+			props.setProperty("useSSL", "true");
+
+			final var connection = DriverManager.getConnection(GODADDY_URL, props);
+
+			udenFilter = connection.prepareStatement("SELECT * FROM PLADE ORDER BY KUNSTNER, AAR");
+
+			rs = udenFilter.executeQuery();
+
+			while (rs.next()) {
+				item = new TableItem(tablePlader, SWT.NONE);
+				item.setText(0, rs.getString("FORLAG"));
+				item.setText(1, rs.getString("NUMMER"));
+				item.setText(2, rs.getString("KUNSTNER"));
+				item.setText(3, rs.getString("TITEL"));
+				item.setText(4, rs.getString("VOLUME"));
+				item.setText(5, rs.getString("MEDIUM"));
+				item.setText(6, rs.getString("ANTAL"));
+				try {
+					item.setText(7, rs.getString("AAR"));
+				} catch (final Exception e) {
+					item.setText(7, "");
+				}
+				item.setText(8, rs.getString("OPRETTET"));
+				item.setText(9, rs.getString("KLASSISK"));
+			}
+
+			connection.close();
+		} catch (final SQLException e) {
+			final var messageBox = new MessageBox(shlErichsensPladesamling, SWT.ICON_ERROR);
+			messageBox.setMessage(e.getMessage());
+			messageBox.open();
+			e.printStackTrace();
+		}
+	}
 
 	/**
 	 * Prepare font
@@ -62,7 +109,7 @@ public class Plader {
 	 */
 	private static void filtrerPlader() {
 		final var filterDialog = new FilterDialog(shlErichsensPladesamling_1, SWT.NONE);
-		final var pladeListe = filterDialog.open(connection, tablePlader);
+		final var pladeListe = filterDialog.open(tablePlader);
 		tablePlader.removeAll();
 
 		if (pladeListe != null) {
@@ -193,7 +240,7 @@ public class Plader {
 		tblclmnOprettet.setWidth(145);
 		tblclmnOprettet.setText("Oprettet");
 
-		TableColumn tblclmnKlassisk = new TableColumn(tablePlader, SWT.NONE);
+		final var tblclmnKlassisk = new TableColumn(tablePlader, SWT.NONE);
 		tblclmnKlassisk.setWidth(80);
 		tblclmnKlassisk.setText("Klassisk");
 		new Label(shlErichsensPladesamling_1, SWT.NONE);
@@ -213,58 +260,10 @@ public class Plader {
 	 */
 	private static void opretPlade() {
 		final var opretDialog = new OpretDialog(shlErichsensPladesamling_1, SWT.NONE);
-		final var plade = opretDialog.open(connection);
+		final var plade = opretDialog.open();
 		if (plade != null) {
 			final var item2 = plade.addItem(tablePlader);
 			tablePlader.showItem(item2);
-		}
-	}
-
-	/**
-	 * Populate table
-	 *
-	 * @param shlErichsensPladesamling
-	 */
-	private static void connectAndPopulateFully(Shell shlErichsensPladesamling) {
-		try {
-//			Change POM to Postgresql if local
-//			connection = DriverManager.getConnection(LOCAL_POSTGRESQL_URL, "postgres", "admin");
-
-//			Change POM to MySQL if remote
-			Properties props = new Properties();
-			props.setProperty("user", USERID);
-			props.setProperty("password", PASSWORD);
-			props.setProperty("useSSL", "true");
-
-			connection = DriverManager.getConnection(GODADDY_URL, props);
-
-			udenFilter = connection.prepareStatement("SELECT * FROM PLADE ORDER BY KUNSTNER, AAR");
-
-			rs = udenFilter.executeQuery();
-
-			while (rs.next()) {
-				item = new TableItem(tablePlader, SWT.NONE);
-				item.setText(0, rs.getString("FORLAG"));
-				item.setText(1, rs.getString("NUMMER"));
-				item.setText(2, rs.getString("KUNSTNER"));
-				item.setText(3, rs.getString("TITEL"));
-				item.setText(4, rs.getString("VOLUME"));
-				item.setText(5, rs.getString("MEDIUM"));
-				item.setText(6, rs.getString("ANTAL"));
-				try {
-					item.setText(7, rs.getString("AAR"));
-				} catch (final Exception e) {
-					item.setText(7, "");
-				}
-				item.setText(8, rs.getString("OPRETTET"));
-				item.setText(9, rs.getString("KLASSISK"));
-			}
-
-		} catch (final SQLException e) {
-			final var messageBox = new MessageBox(shlErichsensPladesamling, SWT.ICON_ERROR);
-			messageBox.setMessage(e.getMessage());
-			messageBox.open();
-			e.printStackTrace();
 		}
 	}
 
@@ -284,7 +283,7 @@ public class Plader {
 		final var tableItem = selection[0];
 		final var i = tablePlader.getSelectionIndices()[0];
 		final var opdaterDialog = new OpdaterDialog(shlErichsensPladesamling_1, SWT.NONE);
-		final var plade = opdaterDialog.open(connection, tableItem);
+		final var plade = opdaterDialog.open(tableItem);
 
 		if (plade != null) {
 			tablePlader.remove(i);
@@ -332,7 +331,7 @@ public class Plader {
 		final var tableItem = selection[0];
 		final var i = tablePlader.getSelectionIndices()[0];
 		final var sletDialog = new SletDialog(shlErichsensPladesamling_1, SWT.NONE);
-		final var slettet = sletDialog.open(connection, tableItem);
+		final var slettet = sletDialog.open(tableItem);
 		if (slettet) {
 			tablePlader.remove(i);
 		}
