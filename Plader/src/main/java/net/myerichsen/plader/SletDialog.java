@@ -24,7 +24,7 @@ import org.eclipse.swt.widgets.Text;
 /**
  * Slet en plade fra pladesamlingen
  *
- * @author Michael Erichsen
+ * @author Michael Erichsen, 2025-2026
  */
 public class SletDialog extends Dialog {
 
@@ -48,6 +48,8 @@ public class SletDialog extends Dialog {
 	private Label lblOprettet;
 	private LocalResourceManager localResourceManager;
 	private Composite composite;
+	private Label lblKlassisk;
+	private Text textKlassisk;
 
 	/**
 	 * Create the dialog.
@@ -155,6 +157,16 @@ public class SletDialog extends Dialog {
 
 		populateDialog(connection, tableItem);
 
+		lblKlassisk = new Label(shlSlet, SWT.NONE);
+		lblKlassisk.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblKlassisk.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
+		lblKlassisk.setText("Klassisk");
+
+		textKlassisk = new Text(shlSlet, SWT.BORDER);
+		textKlassisk.setEditable(false);
+		textKlassisk.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
+		textKlassisk.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+
 		composite = new Composite(shlSlet, SWT.NONE);
 		final var rl_composite = new RowLayout(SWT.HORIZONTAL);
 		rl_composite.pack = false;
@@ -225,6 +237,7 @@ public class SletDialog extends Dialog {
 		textAntal.setText(tableItem.getText(6));
 		textAar.setText(tableItem.getText(7));
 		textOprettet.setText(tableItem.getText(8));
+		textKlassisk.setText(tableItem.getText(9));
 	}
 
 	/**

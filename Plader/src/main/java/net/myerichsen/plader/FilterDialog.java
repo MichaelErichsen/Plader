@@ -29,7 +29,7 @@ import org.eclipse.swt.widgets.Text;
 /**
  * Filtrering af items
  *
- * @author Michael Erichsen, 2015
+ * @author Michael Erichsen, 2025-2026
  */
 public class FilterDialog extends Dialog {
 	protected List<Plade> result;
@@ -55,6 +55,10 @@ public class FilterDialog extends Dialog {
 	private LocalResourceManager localResourceManager;
 	private Composite composite;
 	private Button btnStarterMed;
+	private Label lblKlassisk;
+	private Combo comboKlassisk;
+	private Composite composite_1;
+	private Label lblNewLabel;
 
 	/**
 	 * Create the dialog.
@@ -73,7 +77,7 @@ public class FilterDialog extends Dialog {
 	 */
 	private void createContents() {
 		shlFiltrerPlader = new Shell(getParent(), SWT.SHELL_TRIM | SWT.TITLE);
-		shlFiltrerPlader.setSize(450, 468);
+		shlFiltrerPlader.setSize(500, 600);
 		shlFiltrerPlader.setText("Filtrér plader");
 		shlFiltrerPlader.setLayout(new GridLayout(2, false));
 
@@ -158,6 +162,25 @@ public class FilterDialog extends Dialog {
 		textOprettet.setEditable(false);
 		textOprettet.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
+		lblKlassisk = new Label(shlFiltrerPlader, SWT.NONE);
+		lblKlassisk.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
+		lblKlassisk.setText("Klassisk");
+
+		comboKlassisk = new Combo(shlFiltrerPlader, SWT.NONE);
+		comboKlassisk.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
+		comboKlassisk.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		comboKlassisk.add("");
+		comboKlassisk.add("JA");
+		comboKlassisk.add("NEJ");
+		
+		composite_1 = new Composite(shlFiltrerPlader, SWT.NONE);
+		composite_1.setLayout(new RowLayout(SWT.HORIZONTAL));
+		composite_1.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 2, 1));
+		
+		lblNewLabel = new Label(composite_1, SWT.NONE);
+		lblNewLabel.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
+		lblNewLabel.setText("Klik \"Fortryd\" for at vise alle");
+
 		composite = new Composite(shlFiltrerPlader, SWT.NONE);
 		final var rl_composite = new RowLayout(SWT.HORIZONTAL);
 		rl_composite.pack = false;
@@ -218,7 +241,8 @@ public class FilterDialog extends Dialog {
 		ResultSet rs;
 
 		if (textForlag.getText().isEmpty() && textNummer.getText().isEmpty() && textKunstner.getText().isEmpty()
-				&& textTitel.getText().isEmpty() && comboMedium.getText().isEmpty() && spinnerAar.getText().isEmpty()) {
+				&& textTitel.getText().isEmpty() && comboMedium.getText().isEmpty() && spinnerAar.getText().isEmpty()
+				&& comboKlassisk.getText().isEmpty()) {
 			final var messageBox = new MessageBox(shlFiltrerPlader, SWT.ICON_WARNING);
 			messageBox.setMessage("Mindst ét felt skal udfyldes!");
 			messageBox.open();
@@ -250,6 +274,11 @@ public class FilterDialog extends Dialog {
 		if (!comboMedium.getText().isBlank()) {
 			fieldNames[i] = "MEDIUM";
 			values[i] = comboMedium.getText();
+			i++;
+		}
+		if (!comboKlassisk.getText().isBlank()) {
+			fieldNames[i] = "KLASSISK";
+			values[i] = comboKlassisk.getText();
 			i++;
 		}
 
@@ -282,7 +311,7 @@ public class FilterDialog extends Dialog {
 
 				final var plade = new Plade(rs.getString("FORLAG"), rs.getString("NUMMER"), rs.getString("KUNSTNER"),
 						rs.getString("TITEL"), rs.getInt("VOLUME"), rs.getString("MEDIUM"), rs.getInt("ANTAL"), aar,
-						rs.getString("OPRETTET"));
+						rs.getString("OPRETTET"), rs.getString("KLASSISK"));
 
 				list.add(plade);
 			}
@@ -311,7 +340,8 @@ public class FilterDialog extends Dialog {
 		ResultSet rs;
 
 		if (textForlag.getText().isEmpty() && textNummer.getText().isEmpty() && textKunstner.getText().isEmpty()
-				&& textTitel.getText().isEmpty() && comboMedium.getText().isEmpty() && spinnerAar.getText().isEmpty()) {
+				&& textTitel.getText().isEmpty() && comboMedium.getText().isEmpty() && spinnerAar.getText().isEmpty()
+				&& comboKlassisk.getText().isEmpty()) {
 			final var messageBox = new MessageBox(shlFiltrerPlader, SWT.ICON_WARNING);
 			messageBox.setMessage("Mindst ét felt skal udfyldes!");
 			messageBox.open();
@@ -345,6 +375,11 @@ public class FilterDialog extends Dialog {
 			values[i] = comboMedium.getText();
 			i++;
 		}
+		if (!comboKlassisk.getText().isBlank()) {
+			fieldNames[i] = "KLASSISK";
+			values[i] = comboKlassisk.getText();
+			i++;
+		}
 
 		final var fieldNames2 = new String[i];
 
@@ -375,7 +410,7 @@ public class FilterDialog extends Dialog {
 
 				final var plade = new Plade(rs.getString("FORLAG"), rs.getString("NUMMER"), rs.getString("KUNSTNER"),
 						rs.getString("TITEL"), rs.getInt("VOLUME"), rs.getString("MEDIUM"), rs.getInt("ANTAL"), aar,
-						rs.getString("OPRETTET"));
+						rs.getString("OPRETTET"), rs.getString("KLASSISK"));
 
 				list.add(plade);
 			}

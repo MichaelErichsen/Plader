@@ -1,6 +1,9 @@
 package net.myerichsen.plader;
 
-import static net.myerichsen.plader.Konstanter.*;
+import static net.myerichsen.plader.Konstanter.DUCKDUCKGO_SEARCH_URL;
+import static net.myerichsen.plader.Konstanter.GODADDY_URL;
+import static net.myerichsen.plader.Konstanter.PASSWORD;
+import static net.myerichsen.plader.Konstanter.USERID;
 
 import java.awt.Desktop;
 import java.io.IOException;
@@ -36,7 +39,7 @@ import org.eclipse.swt.widgets.TableItem;
 /**
  * Vedligehold en pladesamling
  *
- * @author Michael Erichsen, 2025
+ * @author Michael Erichsen, 2025-2026
  */
 public class Plader {
 	private static Table tablePlader;
@@ -81,7 +84,7 @@ public class Plader {
 		shlErichsensPladesamling_1 = new Shell();
 		createResourceManager();
 		shlErichsensPladesamling_1.setMinimumSize(new Point(1200, 380));
-		shlErichsensPladesamling_1.setSize(1200, 684);
+		shlErichsensPladesamling_1.setSize(1360, 684);
 		shlErichsensPladesamling_1.setText("Erichsens pladesamling");
 		shlErichsensPladesamling_1.setLayout(new GridLayout(1, false));
 
@@ -189,6 +192,10 @@ public class Plader {
 		final var tblclmnOprettet = new TableColumn(tablePlader, SWT.NONE);
 		tblclmnOprettet.setWidth(145);
 		tblclmnOprettet.setText("Oprettet");
+
+		TableColumn tblclmnKlassisk = new TableColumn(tablePlader, SWT.NONE);
+		tblclmnKlassisk.setWidth(80);
+		tblclmnKlassisk.setText("Klassisk");
 		new Label(shlErichsensPladesamling_1, SWT.NONE);
 
 		connectAndPopulateFully(shlErichsensPladesamling_1);
@@ -250,6 +257,7 @@ public class Plader {
 					item.setText(7, "");
 				}
 				item.setText(8, rs.getString("OPRETTET"));
+				item.setText(9, rs.getString("KLASSISK"));
 			}
 
 		} catch (final SQLException e) {

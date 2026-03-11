@@ -17,6 +17,7 @@ import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowLayout;
@@ -33,7 +34,7 @@ import org.eclipse.swt.widgets.Text;
 /**
  * Opret en plade i en pladesamling
  *
- * @author Michael Erichsen
+ * @author Michael Erichsen, 2025-2026
  */
 public class OpretDialog extends Dialog {
 	private static String propertyPath = System.getProperty("user.home") + File.separator + "plader.properties";
@@ -60,6 +61,9 @@ public class OpretDialog extends Dialog {
 	private LocalResourceManager localResourceManager;
 	private Composite composite;
 	private Label lblNewLabel;
+	private Label lblKlassisk;
+	private Combo comboKlassisk;
+	private Composite composite_1;
 
 	/**
 	 * Create the dialog.
@@ -92,7 +96,8 @@ public class OpretDialog extends Dialog {
 	 */
 	private void createContents() {
 		shlOpretEnNy = new Shell(getParent(), SWT.SHELL_TRIM | SWT.TITLE);
-		shlOpretEnNy.setSize(559, 468);
+		shlOpretEnNy.setMinimumSize(new Point(700, 600));
+		shlOpretEnNy.setSize(700, 600);
 		shlOpretEnNy.setText("Opret en ny plade");
 		shlOpretEnNy.setLayout(new GridLayout(2, false));
 
@@ -188,6 +193,14 @@ public class OpretDialog extends Dialog {
 		spinnerAar.setSelection(1968);
 		spinnerAar.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
+		lblKlassisk = new Label(shlOpretEnNy, SWT.NONE);
+		lblKlassisk.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
+		lblKlassisk.setText("Klassisk");
+
+		comboKlassisk = new Combo(shlOpretEnNy, SWT.NONE);
+		comboKlassisk.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
+		comboKlassisk.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+
 		lblOprettet = new Label(shlOpretEnNy, SWT.NONE);
 		lblOprettet.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
 		lblOprettet.setText("Oprettet");
@@ -202,11 +215,15 @@ public class OpretDialog extends Dialog {
 		composite.setLayout(new RowLayout(SWT.HORIZONTAL));
 		composite.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 2, 1));
 
-		lblNewLabel = new Label(composite, SWT.NONE);
+		lblNewLabel = new Label(composite, SWT.CENTER);
 		lblNewLabel.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
-		lblNewLabel.setText("F3 ved Forlag eller kunstner henter seneste  ");
+		lblNewLabel.setText("F3 ved Forlag eller kunstner henter senest indtastede værdi");
 
-		final var btnOpret = new Button(composite, SWT.NONE);
+		composite_1 = new Composite(shlOpretEnNy, SWT.NONE);
+		composite_1.setLayout(new RowLayout(SWT.HORIZONTAL));
+		composite_1.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, true, false, 2, 1));
+
+		final var btnOpret = new Button(composite_1, SWT.NONE);
 		btnOpret.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
 		btnOpret.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -218,7 +235,7 @@ public class OpretDialog extends Dialog {
 		});
 		btnOpret.setText("Opret");
 
-		final var btnFortryd = new Button(composite, SWT.NONE);
+		final var btnFortryd = new Button(composite_1, SWT.NONE);
 		btnFortryd.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
 		btnFortryd.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -264,17 +281,17 @@ public class OpretDialog extends Dialog {
 			if (textForlag.getText().isEmpty() || textNummer.getText().isEmpty() || textKunstner.getText().isEmpty()
 					|| textTitel.getText().isEmpty() || spinnerVolume.getText().isEmpty()
 					|| comboMedium.getText().isEmpty() || spinnerAntal.getText().isEmpty()
-					|| spinnerAar.getText().isEmpty()) {
+					|| spinnerAar.getText().isEmpty() || comboKlassisk.getText().isEmpty()) {
 				final var messageBox = new MessageBox(shlOpretEnNy, SWT.ICON_WARNING);
 				messageBox.setMessage("Alle felter skal udfyldes!");
 				messageBox.open();
 				return;
 			}
 
-			final var update = "INSERT INTO PLADE (FORLAG, NUMMER, KUNSTNER, TITEL, VOLUME, MEDIUM, ANTAL, AAR, OPRETTET) "
-					+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+			final var insert = "INSERT INTO PLADE (FORLAG, NUMMER, KUNSTNER, TITEL, VOLUME, MEDIUM, ANTAL, AAR, OPRETTET, KLASSISK) "
+					+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-			final var statement = connection.prepareStatement(update);
+			final var statement = connection.prepareStatement(insert);
 
 			statement.setString(1, textForlag.getText().toUpperCase());
 			statement.setString(2, textNummer.getText().toUpperCase());
@@ -285,6 +302,7 @@ public class OpretDialog extends Dialog {
 			statement.setInt(7, Integer.parseInt(spinnerAntal.getText()));
 			statement.setInt(8, Integer.parseInt(spinnerAar.getText()));
 			statement.setString(9, textOprettet.getText());
+			statement.setString(10, comboKlassisk.getText());
 
 			final var rc = statement.executeUpdate();
 
@@ -294,7 +312,7 @@ public class OpretDialog extends Dialog {
 				result = new Plade(textForlag.getText(), textNummer.getText(), textKunstner.getText(),
 						textTitel.getText(), Integer.parseInt(spinnerVolume.getText()), comboMedium.getText(),
 						Integer.parseInt(spinnerAntal.getText()), Integer.parseInt(spinnerAar.getText()),
-						textOprettet.getText());
+						textOprettet.getText(), comboKlassisk.getText());
 				properties.setProperty("forlag", textForlag.getText());
 				properties.setProperty("kunstner", textKunstner.getText());
 

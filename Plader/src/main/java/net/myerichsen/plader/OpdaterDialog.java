@@ -26,7 +26,7 @@ import org.eclipse.swt.widgets.Text;
 /**
  * Opdatér en plade i pladesamlingen
  *
- * @author Michael Erichsen
+ * @author Michael Erichsen, 2025-2026
  */
 public class OpdaterDialog extends Dialog {
 	protected Plade result;
@@ -49,6 +49,8 @@ public class OpdaterDialog extends Dialog {
 	private Label lblOprettet;
 	private LocalResourceManager localResourceManager;
 	private Composite composite;
+	private Label lblKlassisk;
+	private Combo comboKlassisk;
 
 	/**
 	 * Create the dialog.
@@ -70,7 +72,7 @@ public class OpdaterDialog extends Dialog {
 	 */
 	private void createContents(Connection connection, TableItem tableItem) {
 		shlOpdater = new Shell(getParent(), SWT.SHELL_TRIM | SWT.TITLE);
-		shlOpdater.setSize(450, 468);
+		shlOpdater.setSize(500, 500);
 		shlOpdater.setText("Opdatér en plade");
 		shlOpdater.setLayout(new GridLayout(2, false));
 
@@ -144,7 +146,7 @@ public class OpdaterDialog extends Dialog {
 		spinnerAar = new Spinner(shlOpdater, SWT.BORDER);
 		spinnerAar.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
 		spinnerAar.setMinimum(1948);
-		spinnerAar.setMaximum(2030);
+		spinnerAar.setMaximum(2040);
 		spinnerAar.setSelection(1968);
 		spinnerAar.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
@@ -156,6 +158,16 @@ public class OpdaterDialog extends Dialog {
 		textOprettet.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
 		textOprettet.setEditable(false);
 		textOprettet.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+
+		lblKlassisk = new Label(shlOpdater, SWT.NONE);
+		lblKlassisk.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
+		lblKlassisk.setText("Klassisk");
+
+		comboKlassisk = new Combo(shlOpdater, SWT.NONE);
+		comboKlassisk.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
+		comboKlassisk.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		comboKlassisk.add("NEJ");
+		comboKlassisk.add("JA");
 
 		populateDialog(connection, tableItem);
 
@@ -202,7 +214,7 @@ public class OpdaterDialog extends Dialog {
 		try {
 
 			final var statement = connection.prepareStatement(
-					"UPDATE PLADE SET KUNSTNER = ?, TITEL = ?, VOLUME = ?, MEDIUM = ?, ANTAL = ?, AAR = ? "
+					"UPDATE PLADE SET KUNSTNER = ?, TITEL = ?, VOLUME = ?, MEDIUM = ?, ANTAL = ?, AAR = ?, KLASSISK = ? "
 							+ "WHERE FORLAG = ? AND NUMMER = ?");
 
 			statement.setString(1, textKunstner.getText());
@@ -213,6 +225,7 @@ public class OpdaterDialog extends Dialog {
 			statement.setInt(6, Integer.parseInt(spinnerAar.getText()));
 			statement.setString(7, textForlag.getText());
 			statement.setString(8, textNummer.getText());
+			statement.setString(9, comboKlassisk.getText());
 
 			final var rc = statement.executeUpdate();
 
@@ -223,7 +236,7 @@ public class OpdaterDialog extends Dialog {
 				result = new Plade(textForlag.getText(), textNummer.getText(), textKunstner.getText(),
 						textTitel.getText(), Integer.parseInt(spinnerVolume.getText()), comboMedium.getText(),
 						Integer.parseInt(spinnerAntal.getText()), Integer.parseInt(spinnerAar.getText()),
-						textOprettet.getText());
+						textOprettet.getText(), comboKlassisk.getText());
 			} else {
 				messageBox.setMessage("Ingen plade er opdateret");
 			}
@@ -281,5 +294,6 @@ public class OpdaterDialog extends Dialog {
 		} catch (final NumberFormatException e) {
 		}
 		textOprettet.setText(tableItem.getText(8));
+		comboKlassisk.setText(tableItem.getText(9));
 	}
 }
