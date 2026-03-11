@@ -5,7 +5,7 @@ All text is in Danish
 
 ## This is a Java SWT program
 
-Data resides in a PostgreSQL database
+Data resides in a PostgreSQL or MySQL database
 
 CREATE TABLE public.plade (
 	forlag varchar(255) NOT NULL,
