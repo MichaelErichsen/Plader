@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
 /**
  * Change old timestamps to new date format
  *
- * @author Michael Erichsen
+ * @author Michael Erichsen 2025
  */
 public class RetOprettetDato {
 

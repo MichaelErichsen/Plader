@@ -71,7 +71,7 @@ public class SletDialog extends Dialog {
 	 */
 	private void createContents(Connection connection, TableItem tableItem) {
 		shlSlet = new Shell(getParent(), SWT.SHELL_TRIM | SWT.TITLE);
-		shlSlet.setSize(450, 468);
+		shlSlet.setSize(600, 500);
 		shlSlet.setText("Slet en plade");
 		shlSlet.setLayout(new GridLayout(2, false));
 
@@ -155,8 +155,6 @@ public class SletDialog extends Dialog {
 		textOprettet.setEditable(false);
 		textOprettet.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
-		populateDialog(connection, tableItem);
-
 		lblKlassisk = new Label(shlSlet, SWT.NONE);
 		lblKlassisk.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lblKlassisk.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
@@ -166,6 +164,8 @@ public class SletDialog extends Dialog {
 		textKlassisk.setEditable(false);
 		textKlassisk.setFont(localResourceManager.create(FontDescriptor.createFrom("Segoe UI", 12, SWT.NORMAL)));
 		textKlassisk.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+
+		populateDialog(connection, tableItem);
 
 		composite = new Composite(shlSlet, SWT.NONE);
 		final var rl_composite = new RowLayout(SWT.HORIZONTAL);
